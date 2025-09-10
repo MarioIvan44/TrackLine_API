@@ -103,7 +103,7 @@ public class Viaje {
     @PostMapping("/crear")
     public ResponseEntity<?> crearViaje(@Validated(DTOViaje.OnCreate.class) @RequestBody DTOViaje dto) {
         try {
-            DTOViaje creado = service.create(dto.getIdOrdenServicio(), dto.getIdTransporteViaje());
+            DTOViaje creado = service.create(dto, dto.getIdOrdenServicio(), dto.getIdTransporteViaje(), dto.getIdEstado());
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                     "status", "Éxito",
                     "data", creado,
@@ -134,7 +134,7 @@ public class Viaje {
     public ResponseEntity<?> actualizarViaje(@PathVariable Long id,
                                              @Validated(DTOViaje.OnUpdate.class) @RequestBody DTOViaje dto) {
         try {
-            DTOViaje actualizado = service.putUpdate(id, dto.getIdOrdenServicio(), dto.getIdTransporteViaje());
+            DTOViaje actualizado = service.putUpdate(id, dto, dto.getIdOrdenServicio(), dto.getIdTransporteViaje(), dto.getIdEstado());
             return ResponseEntity.ok(Map.of(
                     "status", "Éxito",
                     "data", actualizado,
@@ -170,7 +170,7 @@ public class Viaje {
     public ResponseEntity<?> patchViaje(@PathVariable Long id,
                                         @Validated(DTOViaje.OnPatch.class) @RequestBody DTOViaje dto) {
         try {
-            DTOViaje actualizado = service.patch(id, dto.getIdOrdenServicio(), dto.getIdTransporteViaje());
+            DTOViaje actualizado = service.patch(id, dto);
             return ResponseEntity.ok(Map.of(
                     "status", "Éxito",
                     "data", actualizado,

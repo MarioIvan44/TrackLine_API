@@ -26,9 +26,6 @@ public class DTOEstados {
     private Boolean entregada;
     private Boolean facturacion;
 
-    @Positive(message = "El idOrdenServicio no puede ser negativo", groups = {OnCreate.class, OnPatch.class, OnUpdate.class})
-    private Long idOrdenServicio;
-
     public interface OnCreate{}
     public interface OnUpdate{}
     public interface OnPatch{}

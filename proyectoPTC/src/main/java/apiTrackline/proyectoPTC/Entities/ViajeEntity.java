@@ -1,7 +1,11 @@
 package apiTrackline.proyectoPTC.Entities;
 
+import apiTrackline.proyectoPTC.Models.DTO.DTOEstados;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter @Setter @EqualsAndHashCode @ToString
 @Entity
@@ -26,4 +30,36 @@ public class ViajeEntity {
     @ManyToOne
     @JoinColumn(name = "IDTRANSPORTE", referencedColumnName = "IDTRANSPORTE")
     private TransporteEntity transporte;
+
+    @ManyToOne
+    @JoinColumn(name = "IDESTADO", referencedColumnName = "IDESTADO")
+    private EstadosEntity idEstado;
+
+    //CAMPOS PROPIOS DE VIAJE
+    @Column(name = "HORAESTIMADALLEGADA")
+    private LocalDateTime horaEstimadaLlegada;
+
+    @Column(name = "HORALLEGADA")
+    private LocalDateTime horaLLegada;
+
+    @Column(name = "HORASALIDA")
+    private LocalDateTime horaSalida;
+
+    @Column(name = "LUGARPARTIDA")
+    private String lugarPartida;
+
+    @Column(name = "COORDENADAPARTIDA")
+    private String coordenadaPartida;
+
+    @Column(name = "LUGARLLEGADA")
+    private String lugarLLegada;
+
+    @Column(name = "COORDENADALLEGADA")
+    private String coordenadaLlegada;
+
+    @Column(name = "PROGRESO")
+    private Long progreso;
+
+    @Column(name = "PROGRESOTRANS")
+    private String progresoTrans;
 }

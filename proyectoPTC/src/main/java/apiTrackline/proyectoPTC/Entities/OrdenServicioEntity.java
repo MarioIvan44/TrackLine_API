@@ -52,21 +52,10 @@ public class OrdenServicioEntity {
     private RecoleccionEntity idRecoleccion;
 
     @ManyToOne
-    @JoinColumn(name = "IDCARGOS", nullable = true)
-    private CargosEntity idCargos;
-
-    @ManyToOne
-    @JoinColumn(name = "IDFINANCIAMIENTO", nullable = true)
-    private FinanciamientoEntity financiamiento;
-
-    @ManyToOne
     @JoinColumn(name = "IDOBSERVACIONES", nullable = true)
     private ObservacionesEntity idObservaciones;
 
+    //Campos de otras tablas, proporciona el "IdOrdenServicio" a las otras tablas
     @OneToMany(mappedBy = "OrdenServicio", cascade = CascadeType.ALL)
     private List<ViajeEntity> viajes;
-
-    @OneToMany(mappedBy = "OrdenServicioEstados", cascade = CascadeType.ALL)
-    private List<EstadosEntity> estados;
-
 }

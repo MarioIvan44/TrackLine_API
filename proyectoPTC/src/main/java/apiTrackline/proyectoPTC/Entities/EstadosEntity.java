@@ -11,14 +11,9 @@ import lombok.Setter;
 public class EstadosEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "estadosSeq")
-    @SequenceGenerator(
-            name = "estadosSeq",
-            sequenceName = "SEQ_ID_EST",
-            allocationSize = 1
-    )
+    @SequenceGenerator(name = "estadosSeq", sequenceName = "SEQ_ID_EST", allocationSize = 1)
     @Column(name = "IDESTADO")
     private Long idEstado;
-
 
     //Estados -------- Selectivo
     @ManyToOne
@@ -58,9 +53,4 @@ public class EstadosEntity {
 
     @Column(name = "FACTURACION")
     private Boolean facturacion;
-
-    //Estados -------- Ordenes de servicio
-    @ManyToOne
-    @JoinColumn(name = "IDORDENSERVICIO", referencedColumnName = "IDORDENSERVICIO")
-    private OrdenServicioEntity OrdenServicioEstados;
 }

@@ -1,6 +1,7 @@
 package apiTrackline.proyectoPTC.Services;
 
 import apiTrackline.proyectoPTC.Entities.*;
+import apiTrackline.proyectoPTC.Exceptions.EstadosExceptions.ExceptionEstadoNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.EstadosExceptions.ExceptionOrdenServicioNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.PermisosExceptions.ExceptionPermisoNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.TransporteExceptions.ExceptionTransporteNoEncontrado;
@@ -10,6 +11,7 @@ import apiTrackline.proyectoPTC.Exceptions.ViajeExceptions.ExceptionViajeRelacio
 import apiTrackline.proyectoPTC.Models.DTO.DTOClientes;
 import apiTrackline.proyectoPTC.Models.DTO.DTOPermisos;
 import apiTrackline.proyectoPTC.Models.DTO.DTOViaje;
+import apiTrackline.proyectoPTC.Repositories.EstadosRepository;
 import apiTrackline.proyectoPTC.Repositories.ViajeRepository;
 import apiTrackline.proyectoPTC.Repositories.OrdenServicioRepository;
 import apiTrackline.proyectoPTC.Repositories.TransporteRepository;
@@ -37,6 +39,9 @@ public class ViajeService {
     @Autowired
     private TransporteRepository transporteRepo;
 
+    @Autowired
+    private EstadosRepository estadosRepository;
+
     // Obtener todos los viajes
     public List<DTOViaje> getAll() {
         List<ViajeEntity> lista = repo.findAll();
@@ -56,6 +61,17 @@ public class ViajeService {
     private DTOViaje convertirADTO(ViajeEntity entity) {
         DTOViaje dto = new DTOViaje();
         dto.setIdViaje(entity.getIdViaje());
+
+        // --- CAMPOS PROPIOS DE VIAJE ---
+        dto.setHoraEstimadaLlegada(entity.getHoraEstimadaLlegada());
+        dto.setHoraLLegada(entity.getHoraLLegada());
+        dto.setHoraSalida(entity.getHoraSalida());
+        dto.setLugarPartida(entity.getLugarPartida());
+        dto.setCoordenadaPartida(entity.getCoordenadaPartida());
+        dto.setLugarLLegada(entity.getLugarLLegada());
+        dto.setCoordenadaLlegada(entity.getCoordenadaLlegada());
+        dto.setProgreso(entity.getProgreso());
+        dto.setProgresoTrans(entity.getProgresoTrans());
 
         // --- ORDEN SERVICIO ---
         OrdenServicioEntity orden = entity.getOrdenServicio();
@@ -105,12 +121,38 @@ public class ViajeService {
                 dto.setCapacidadServicioViaje(st.getCapacidad());
             }
         }
+        //--- ESTADO ---
+        if (entity.getIdEstado() != null) {
+            EstadosEntity estado = entity.getIdEstado();
+            dto.setIdEstado(estado.getIdEstado());
+
+            // si EstadosEntity tiene relación con Selectivo
+            if (estado.getSelectivo() != null) {
+                dto.setIdSelectivo(estado.getSelectivo().getIdSelectivo());
+                dto.setColorSelectivo(estado.getSelectivo().getColorSelectivo());
+            }
+
+            // ahora los demás campos que tienes en EstadosEntity
+            dto.setDocumentos(estado.getDocumentos());
+            dto.setClasificacion(estado.getClasificacion());
+            dto.setDigitacion(estado.getDigitacion());
+            dto.setRegistro(estado.getRegistro());
+            dto.setPago(estado.getPago());
+            dto.setLevantePago(estado.getLevantePago());
+            dto.setEquipoTransporte(estado.getEquipoTransporte());
+            dto.setCarga(estado.getCarga());
+            dto.setEnCamino(estado.getEnCamino());
+            dto.setEntregada(estado.getEntregada());
+            dto.setFacturacion(estado.getFacturacion());
+        }
+
+
 
         return dto;
     }
 
-    // Crear viaje
-    public DTOViaje create(Long idOrdenServicio, Long idTransporte) {
+
+    public DTOViaje create(DTOViaje dto, Long idOrdenServicio, Long idTransporte, Long idEstado) {
         try {
             OrdenServicioEntity orden = ordenRepo.findById(idOrdenServicio)
                     .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado(
@@ -120,20 +162,35 @@ public class ViajeService {
                     .orElseThrow(() -> new ExceptionTransporteNoEncontrado(
                             "No se encontró transporte con id: " + idTransporte));
 
+            EstadosEntity estados = estadosRepository.findById(idEstado)
+                    .orElseThrow(() -> new ExceptionEstadoNoEncontrado(
+                            "No se encontró estado con id: " + idEstado));
+
             ViajeEntity viaje = new ViajeEntity();
             viaje.setOrdenServicio(orden);
             viaje.setTransporte(transporte);
+            viaje.setIdEstado(estados);
+
+            // --- CAMPOS PROPIOS DE VIAJE ---
+            viaje.setHoraEstimadaLlegada(dto.getHoraEstimadaLlegada());
+            viaje.setHoraLLegada(dto.getHoraLLegada());
+            viaje.setHoraSalida(dto.getHoraSalida());
+            viaje.setLugarPartida(dto.getLugarPartida());
+            viaje.setCoordenadaPartida(dto.getCoordenadaPartida());
+            viaje.setLugarLLegada(dto.getLugarLLegada());
+            viaje.setCoordenadaLlegada(dto.getCoordenadaLlegada());
+            viaje.setProgreso(dto.getProgreso());
+            viaje.setProgresoTrans(dto.getProgresoTrans());
 
             ViajeEntity guardado = repo.save(viaje);
             return convertirADTO(guardado);
 
-        } catch (ExceptionOrdenServicioNoEncontrado | ExceptionTransporteNoEncontrado e) {
-            throw e; //
         } catch (Exception e) {
             log.error("Error al crear viaje", e);
             throw new ExceptionViajeNoRegistrado("Error inesperado al registrar viaje");
         }
     }
+
 
     // Eliminar viaje
     public String delete(Long id) {
@@ -148,31 +205,27 @@ public class ViajeService {
     }
 
     // Actualización parcial (PATCH)
-    public DTOViaje patch(Long id, Long idOrdenServicio, Long idTransporte) {
+    public DTOViaje patch(Long id, DTOViaje dto) {
         ViajeEntity viaje = repo.findById(id)
                 .orElseThrow(() -> new ExceptionViajeNoEncontrado("No se encontró viaje con id: " + id));
 
-        if (idOrdenServicio != null) {
-            OrdenServicioEntity orden = ordenRepo.findById(idOrdenServicio)
-                    .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado("No se encontró orden de servicio con id: " + idOrdenServicio));
-            viaje.setOrdenServicio(orden);
-        }
-
-        if (idTransporte != null) {
-            TransporteEntity transporte = transporteRepo.findById(idTransporte)
-                    .orElseThrow(() -> new ExceptionTransporteNoEncontrado("No se encontró transporte con id: " + idTransporte));
-            viaje.setTransporte(transporte);
-        }
+        if (dto.getHoraEstimadaLlegada() != null) viaje.setHoraEstimadaLlegada(dto.getHoraEstimadaLlegada());
+        if (dto.getHoraLLegada() != null) viaje.setHoraLLegada(dto.getHoraLLegada());
+        if (dto.getHoraSalida() != null) viaje.setHoraSalida(dto.getHoraSalida());
+        if (dto.getLugarPartida() != null) viaje.setLugarPartida(dto.getLugarPartida());
+        if (dto.getCoordenadaPartida() != null) viaje.setCoordenadaPartida(dto.getCoordenadaPartida());
+        if (dto.getLugarLLegada() != null) viaje.setLugarLLegada(dto.getLugarLLegada());
+        if (dto.getCoordenadaLlegada() != null) viaje.setCoordenadaLlegada(dto.getCoordenadaLlegada());
+        if (dto.getProgreso() != null) viaje.setProgreso(dto.getProgreso());
+        if (dto.getProgresoTrans() != null) viaje.setProgresoTrans(dto.getProgresoTrans());
 
         return convertirADTO(repo.save(viaje));
     }
 
-    // Actualización total (PUT)
-    public DTOViaje putUpdate(Long id, Long idOrdenServicio, Long idTransporte) {
-        if (idOrdenServicio == null || idTransporte == null) {
-            throw new IllegalArgumentException("Se requiere ambos campos: idOrdenServicio e idTransporte");
-        }
 
+    // Actualización total (PUT)
+    // PUT (actualización total)
+    public DTOViaje putUpdate(Long id, DTOViaje dto, Long idOrdenServicio, Long idTransporte, Long idEstado) {
         ViajeEntity viaje = repo.findById(id)
                 .orElseThrow(() -> new ExceptionViajeNoEncontrado("No se encontró viaje con id: " + id));
 
@@ -182,11 +235,27 @@ public class ViajeService {
         TransporteEntity transporte = transporteRepo.findById(idTransporte)
                 .orElseThrow(() -> new ExceptionTransporteNoEncontrado("No se encontró transporte con id: " + idTransporte));
 
+        EstadosEntity estados = estadosRepository.findById(idEstado)
+                .orElseThrow(() -> new ExceptionEstadoNoEncontrado("No se encontró estado con id: " + idEstado));
+
         viaje.setOrdenServicio(orden);
         viaje.setTransporte(transporte);
+        viaje.setIdEstado(estados);
+
+        // --- CAMPOS PROPIOS DE VIAJE ---
+        viaje.setHoraEstimadaLlegada(dto.getHoraEstimadaLlegada());
+        viaje.setHoraLLegada(dto.getHoraLLegada());
+        viaje.setHoraSalida(dto.getHoraSalida());
+        viaje.setLugarPartida(dto.getLugarPartida());
+        viaje.setCoordenadaPartida(dto.getCoordenadaPartida());
+        viaje.setLugarLLegada(dto.getLugarLLegada());
+        viaje.setCoordenadaLlegada(dto.getCoordenadaLlegada());
+        viaje.setProgreso(dto.getProgreso());
+        viaje.setProgresoTrans(dto.getProgresoTrans());
 
         return convertirADTO(repo.save(viaje));
     }
+
 
     // Buscar por ID
     public DTOViaje buscarPorId(Long id) {

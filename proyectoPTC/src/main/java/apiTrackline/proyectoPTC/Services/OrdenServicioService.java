@@ -35,7 +35,6 @@ public class OrdenServicioService {
 
     @Autowired
     private OrdenServicioRepository repo;
-
     @Autowired
     private ClientesRepository clientesRepository;
     @Autowired
@@ -48,10 +47,6 @@ public class OrdenServicioService {
     private TransporteRepository transporteRepo;
     @Autowired
     private RecoleccionRepository recoleccionRepo;
-    @Autowired
-    private CargosRepository cargosRepo;
-    @Autowired
-    private FinanciamientoRepository financiamientoRepo;
     @Autowired
     private ObservacionesRepository observacionesRepo;
 
@@ -167,28 +162,6 @@ public class OrdenServicioService {
             dto.setPaisDestino(entity.getIdRecoleccion().getPaisDestino());
         }
 
-        // Cargos
-        if (entity.getIdCargos() != null) {
-            dto.setIdCargos(entity.getIdCargos().getIdCargos());
-            dto.setMontoCargos(entity.getIdCargos().getMonto());
-
-            if (entity.getIdCargos().getTipoDatoContable() != null) {
-                dto.setIdTipoDatoContables(entity.getIdCargos().getTipoDatoContable().getIdTipoDatoContable());
-                dto.setNombreTipoDatoContables(entity.getIdCargos().getTipoDatoContable().getNombre());
-            }
-        }
-
-        // Financiamiento
-        if (entity.getFinanciamiento() != null) {
-            dto.setIdFinanciamiento(entity.getFinanciamiento().getIdFinanciamiento());
-            dto.setMontoFinanciamiento(entity.getFinanciamiento().getMonto());
-
-            if (entity.getFinanciamiento().getTipoFinanciamiento() != null) {
-                dto.setIdTipoFinanciamiento(entity.getFinanciamiento().getTipoFinanciamiento().getIdTipoFinanciamiento());
-                dto.setNombretipoFinanciamineto(entity.getFinanciamiento().getTipoFinanciamiento().getNombre());
-            }
-        }
-
         // Observaciones
         if (entity.getIdObservaciones() != null) {
             dto.setIdObservaciones(entity.getIdObservaciones().getIdObservaciones());
@@ -268,16 +241,6 @@ public class OrdenServicioService {
                         recoleccionRepo.findById(dto.getIdRecoleccion()).orElse(null));
             }
 
-            if (dto.getIdCargos() != null) {
-                entity.setIdCargos(
-                        cargosRepo.findById(dto.getIdCargos()).orElse(null));
-            }
-
-            if (dto.getIdFinanciamiento() != null) {
-                entity.setFinanciamiento(
-                        financiamientoRepo.findById(dto.getIdFinanciamiento()).orElse(null));
-            }
-
             if (dto.getIdObservaciones() != null) {
                 entity.setIdObservaciones(
                         observacionesRepo.findById(dto.getIdObservaciones()).orElse(null));
@@ -334,20 +297,6 @@ public class OrdenServicioService {
             RecoleccionEntity recoleccion = recoleccionRepo.findById(dto.getIdRecoleccion())
                         .orElseThrow(() -> new ExceptionRecoleccionNoEncontrado("Recolección no encontrado con id: " + dto.getIdRecoleccion()));
             entity.setIdRecoleccion(recoleccion);
-        }
-
-        // Cargos
-        if (dto.getIdCargos() != null) {
-            CargosEntity cargos = cargosRepo.findById(dto.getIdCargos())
-                    .orElseThrow(() -> new ExceptionCargosNoEncontrado("Cargos no encontrado con id: " + dto.getIdCargos()));
-            entity.setIdCargos(cargos);
-        }
-
-        // Financiamiento
-        if (dto.getIdFinanciamiento() != null) {
-            FinanciamientoEntity financiamiento = financiamientoRepo.findById(dto.getIdFinanciamiento())
-                    .orElseThrow(() -> new ExceptionFinanciamientoNoEncontrado("Financiamiento no encontrado con id: " + dto.getIdFinanciamiento()));
-            entity.setFinanciamiento(financiamiento);
         }
 
         // Observaciones
@@ -425,26 +374,6 @@ public class OrdenServicioService {
                     entity.setIdRecoleccion(recoleccion.get());
                 } else {
                     return "Error: Recolección no encontrada";
-                }
-            }
-
-            // Cargos
-            if (dto.getIdCargos() != null) {
-                Optional<CargosEntity> cargos = cargosRepo.findById(dto.getIdCargos());
-                if (cargos.isPresent()) {
-                    entity.setIdCargos(cargos.get());
-                } else {
-                    return "Error: Cargos no encontrados";
-                }
-            }
-
-            // Financiamiento
-            if (dto.getIdFinanciamiento() != null) {
-                Optional<FinanciamientoEntity> financiamiento = financiamientoRepo.findById(dto.getIdFinanciamiento());
-                if (financiamiento.isPresent()) {
-                    entity.setFinanciamiento(financiamiento.get());
-                } else {
-                    return "Error: Financiamiento no encontrado";
                 }
             }
 

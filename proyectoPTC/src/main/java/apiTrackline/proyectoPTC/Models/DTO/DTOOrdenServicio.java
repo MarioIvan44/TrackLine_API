@@ -90,30 +90,15 @@ public class DTOOrdenServicio {
     private String lugarDestino;
     private String paisDestino;
 
-    // Cargos
-    @Positive(message = "El id de cargos no puede ser negativo", groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
-    private Long idCargos;
-    private Long montoCargos;
-    //Cargos -----> TipoDatoContable
-    private Long idTipoDatoContables;
-    private String nombreTipoDatoContables;
-
-    // Financiamientos
-    @Positive(message = "El id de financiamiento no puede ser negativo", groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
-    private Long idFinanciamiento;
-    private Long montoFinanciamiento;
-    //Financiamientos -----> TipoFinanciamiento
-    private Long idTipoFinanciamiento;
-    private String nombretipoFinanciamineto;
-
     // Observaciones
     @Positive(message = "El id de observaciones no puede ser negativo", groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
     private Long idObservaciones;
-    private String textoObservacion;
     //Observaciones -----> Selectivo
     @Positive(message = "El id de selectivo no puede ser negativo", groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
     private Long idSelectivo;
     private String colorSelectivo;
+    //Observaciones ----- campoPropio
+    private String textoObservacion;
 
     public interface OnCreate {}
     public interface OnUpdate {}

@@ -55,10 +55,6 @@ public class EstadosService {
             dto.setColorSelectivo(entity.getSelectivo().getColorSelectivo());
         }
 
-        // Orden de Servicio
-        if (entity.getOrdenServicioEstados() != null) {
-            dto.setIdOrdenServicio(entity.getOrdenServicioEstados().getIdOrdenServicio());
-        }
 
         dto.setLevantePago(entity.getLevantePago());
         dto.setEquipoTransporte(entity.getEquipoTransporte());
@@ -73,11 +69,6 @@ public class EstadosService {
     // CREATE
     public DTOEstados agregarEstado(DTOEstados dto) {
         if (dto == null) throw new IllegalArgumentException("No puedes agregar un estado vacío");
-
-        // Validamos que el idOrdenServicio exista
-        OrdenServicioEntity orden = ordenRepo.findById(dto.getIdOrdenServicio())
-                .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado(
-                        "Orden de servicio no encontrada con id " + dto.getIdOrdenServicio()));
 
         // Validamos que el idSelectivo exista
         SelectivoEntity selectivo = selectivoRepo.findById(dto.getIdSelectivo())
@@ -98,8 +89,6 @@ public class EstadosService {
             entity.setEntregada(dto.getEntregada());
             entity.setFacturacion(dto.getFacturacion());
 
-            // Relacionar con entidades
-            entity.setOrdenServicioEstados(orden);
             entity.setSelectivo(selectivo);
 
             EstadosEntity creado = repo.save(entity);
@@ -130,14 +119,6 @@ public class EstadosService {
         estado.setEntregada(dto.getEntregada());
         estado.setFacturacion(dto.getFacturacion());
 
-        // Validamos si quiere actualizar la orden de servicio
-        if (dto.getIdOrdenServicio() != null) {
-            OrdenServicioEntity orden = ordenRepo.findById(dto.getIdOrdenServicio())
-                    .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado(
-                            "Orden de servicio no encontrada con id " + dto.getIdOrdenServicio()));
-            estado.setOrdenServicioEstados(orden);
-        }
-
         // Validamos si quiere actualizar el selectivo
         if (dto.getIdSelectivo() != null) {
             SelectivoEntity selectivo = selectivoRepo.findById(dto.getIdSelectivo())
@@ -166,13 +147,6 @@ public class EstadosService {
         if (dto.getEntregada() != null) estado.setEntregada(dto.getEntregada());
         if (dto.getFacturacion() != null) estado.setFacturacion(dto.getFacturacion());
 
-        // Validamos si quiere actualizar la orden de servicio
-        if (dto.getIdOrdenServicio() != null) {
-            OrdenServicioEntity orden = ordenRepo.findById(dto.getIdOrdenServicio())
-                    .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado(
-                            "Orden de servicio no encontrada con id " + dto.getIdOrdenServicio()));
-            estado.setOrdenServicioEstados(orden);
-        }
 
         // Validamos si quiere actualizar el selectivo
         if (dto.getIdSelectivo() != null) {
