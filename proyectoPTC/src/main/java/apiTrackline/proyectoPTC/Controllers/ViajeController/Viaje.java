@@ -5,10 +5,12 @@ import apiTrackline.proyectoPTC.Exceptions.TrackingExceptions.ExceptionViajeNoEn
 import apiTrackline.proyectoPTC.Exceptions.TransporteExceptions.ExceptionTransporteNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.ViajeExceptions.ExceptionViajeNoRegistrado;
 import apiTrackline.proyectoPTC.Exceptions.ViajeExceptions.ExceptionViajeRelacionada;
+import apiTrackline.proyectoPTC.Models.DTO.DTOPermisos;
 import apiTrackline.proyectoPTC.Models.DTO.DTOViaje;
 import apiTrackline.proyectoPTC.Services.ViajeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -48,6 +50,35 @@ public class Viaje {
                     "message", "Error inesperado al buscar viaje por ID"
             ));
         }
+    }
+
+    @GetMapping("/datosViaje")
+    public ResponseEntity<?> getViajes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        if (page < 0) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "Error de validación",
+                    "message", "El número de página no puede ser negativo"
+            ));
+        }
+
+        if (size <= 0 || size > 50) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "Error de validación",
+                    "message", "El tamaño de la página debe estar entre 1 y 50"
+            ));
+        }
+
+        Page<DTOViaje> viajes = service.obtenerViajes(page, size);
+        if (viajes == null || viajes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "status", "Error",
+                    "message", "No hay viajes registrados"
+            ));
+        }
+        return ResponseEntity.ok(viajes);
     }
 
     // MÉTODO GET - Obtener todos

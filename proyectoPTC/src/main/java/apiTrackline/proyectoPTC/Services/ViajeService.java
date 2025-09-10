@@ -2,10 +2,13 @@ package apiTrackline.proyectoPTC.Services;
 
 import apiTrackline.proyectoPTC.Entities.*;
 import apiTrackline.proyectoPTC.Exceptions.EstadosExceptions.ExceptionOrdenServicioNoEncontrado;
+import apiTrackline.proyectoPTC.Exceptions.PermisosExceptions.ExceptionPermisoNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.TransporteExceptions.ExceptionTransporteNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.ViajeExceptions.ExceptionViajeNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.ViajeExceptions.ExceptionViajeNoRegistrado;
 import apiTrackline.proyectoPTC.Exceptions.ViajeExceptions.ExceptionViajeRelacionada;
+import apiTrackline.proyectoPTC.Models.DTO.DTOClientes;
+import apiTrackline.proyectoPTC.Models.DTO.DTOPermisos;
 import apiTrackline.proyectoPTC.Models.DTO.DTOViaje;
 import apiTrackline.proyectoPTC.Repositories.ViajeRepository;
 import apiTrackline.proyectoPTC.Repositories.OrdenServicioRepository;
@@ -13,6 +16,9 @@ import apiTrackline.proyectoPTC.Repositories.TransporteRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +43,13 @@ public class ViajeService {
         return lista.stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
+    }
+
+    //  GET paginado
+    public Page<DTOViaje> obtenerViajes(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ViajeEntity> viajes = repo.findAll(pageable);
+        return viajes.map(this::convertirADTO);
     }
 
     // Convertir a DTO

@@ -1,11 +1,13 @@
 package apiTrackline.proyectoPTC.Services;
 
 import apiTrackline.proyectoPTC.Entities.PermisosEntity;
+import apiTrackline.proyectoPTC.Entities.ViajeEntity;
 import apiTrackline.proyectoPTC.Exceptions.PermisosExceptions.ExceptionPermisoNoRegistrado;
 import apiTrackline.proyectoPTC.Exceptions.PermisosExceptions.ExceptionPermisoRelacionado;
 import apiTrackline.proyectoPTC.Exceptions.TipoFinanciamientoExceptions.ExceptionTipoFinanciamientoNoRegistrado;
 import apiTrackline.proyectoPTC.Exceptions.TipoFinanciamientoExceptions.ExceptionTipoFinanciamientoRelacionado;
 import apiTrackline.proyectoPTC.Models.DTO.DTOPermisos;
+import apiTrackline.proyectoPTC.Models.DTO.DTOViaje;
 import apiTrackline.proyectoPTC.Repositories.PermisosRepository;
 import apiTrackline.proyectoPTC.Exceptions.PermisosExceptions.ExceptionPermisoNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.PermisosExceptions.ExceptionPermisoDuplicado;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,10 +30,8 @@ public class PermisosService {
 
     //  GET paginado
     public Page<DTOPermisos> obtenerPermisos(int page, int size) {
-        Page<PermisosEntity> permisos = repo.findAll(PageRequest.of(page, size));
-        if (permisos.isEmpty()) {
-            throw new ExceptionPermisoNoEncontrado("No existen permisos registrados.");
-        }
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PermisosEntity> permisos = repo.findAll(pageable);
         return permisos.map(this::convertirADTO);
     }
 
