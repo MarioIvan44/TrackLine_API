@@ -36,4 +36,8 @@ public class ClientesEntity {
     @ManyToOne
     @JoinColumn(name = "IDUSUARIO", referencedColumnName = "IDUSUARIO")
     private UsuarioEntity usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "IDTIPOCLIENTE", referencedColumnName = "IDTIPOCLIENTE")
+    private TipoClienteEntity tipoCliente;
 }

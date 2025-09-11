@@ -1,16 +1,11 @@
 package apiTrackline.proyectoPTC.Services;
 
 import apiTrackline.proyectoPTC.Entities.ClientesEntity;
+import apiTrackline.proyectoPTC.Entities.TipoClienteEntity;
 import apiTrackline.proyectoPTC.Entities.UsuarioEntity;
-import apiTrackline.proyectoPTC.Exceptions.ClientesExceptions.ExceptionClienteNoEncontrado;
-import apiTrackline.proyectoPTC.Exceptions.ClientesExceptions.ExceptionClienteNoRegistrado;
-import apiTrackline.proyectoPTC.Exceptions.ClientesExceptions.ExceptionClienteUsuarioNoEncontrado;
-import apiTrackline.proyectoPTC.Exceptions.ClientesExceptions.ExceptionClienteUsuarioYaAsignado;
+import apiTrackline.proyectoPTC.Exceptions.ClientesExceptions.*;
 import apiTrackline.proyectoPTC.Models.DTO.DTOClientes;
-import apiTrackline.proyectoPTC.Repositories.ClientesRepository;
-import apiTrackline.proyectoPTC.Repositories.EmpleadosRepository;
-import apiTrackline.proyectoPTC.Repositories.TransportistaRepository;
-import apiTrackline.proyectoPTC.Repositories.UsuarioRepository;
+import apiTrackline.proyectoPTC.Repositories.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,6 +26,7 @@ public class ClientesService {
     @Autowired private UsuarioRepository usuarioRepo;
     @Autowired private EmpleadosRepository empleadosRepo;
     @Autowired private TransportistaRepository transportistasRepo;
+    @Autowired private TipoClienteRepository tipoClienteRepo;
 
     public List<DTOClientes> obtenerSinPaginacion(){
         List<ClientesEntity> clientes = repo.findAll();
@@ -64,6 +61,11 @@ public class ClientesService {
                 dto.setNombreRol(usuario.getRol().getRol());
             }
         }
+
+        if (entity.getTipoCliente() != null){
+            dto.setIdTipoCliente(entity.getTipoCliente().getIdTipoCliente());
+            dto.setTipoCliente(entity.getTipoCliente().getTipo());
+        }
         return dto;
     }
 
@@ -97,6 +99,13 @@ public class ClientesService {
                         .orElseThrow(() -> new ExceptionClienteUsuarioNoEncontrado(
                                 "Usuario no encontrado con id: " + dto.getIdUsuario()));
                 entity.setUsuario(usuario);
+            }
+
+            if(dto.getIdTipoCliente() != null){
+                TipoClienteEntity tipoCliente = tipoClienteRepo.findById(dto.getIdTipoCliente())
+                        .orElseThrow(() -> new ExceptionTipoClienteNoEncontrado(
+                                "Tipo cliente no encontrado con id: " + dto.getIdTipoCliente()));
+                entity.setTipoCliente(tipoCliente);
             }
 
             ClientesEntity guardado = repo.save(entity);
@@ -137,6 +146,12 @@ public class ClientesService {
                 entity.setUsuario(usuario);
             }
 
+            if(dto.getIdTipoCliente() != null){
+                TipoClienteEntity tipoCliente = tipoClienteRepo.findById(dto.getIdTipoCliente())
+                        .orElseThrow(() -> new ExceptionTipoClienteNoEncontrado(
+                                "Tipo cliente no encontrado con id: " + dto.getIdTipoCliente()));
+                entity.setTipoCliente(tipoCliente);
+            }
             return convertirDTO(repo.save(entity));
 
         } catch (DataIntegrityViolationException e) {
@@ -168,6 +183,14 @@ public class ClientesService {
                 UsuarioEntity usuario = usuarioRepo.findById(dto.getIdUsuario())
                         .orElseThrow(() -> new ExceptionClienteUsuarioNoEncontrado("Usuario no encontrado con id: " + dto.getIdUsuario()));
                 entity.setUsuario(usuario);
+            }
+
+
+            if(dto.getIdTipoCliente() != null){
+                TipoClienteEntity tipoCliente = tipoClienteRepo.findById(dto.getIdTipoCliente())
+                        .orElseThrow(() -> new ExceptionTipoClienteNoEncontrado(
+                                "Tipo cliente no encontrado con id: " + dto.getIdTipoCliente()));
+                entity.setTipoCliente(tipoCliente);
             }
 
             return convertirDTO(repo.save(entity));

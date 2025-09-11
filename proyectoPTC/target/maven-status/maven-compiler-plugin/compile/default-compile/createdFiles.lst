@@ -42,6 +42,7 @@ apiTrackline\proyectoPTC\Models\DTO\DTOTransportista$OnPatch.class
 apiTrackline\proyectoPTC\Services\FinanciamientoService.class
 apiTrackline\proyectoPTC\Exceptions\RecoleccionExceptions\ExceptionRecoleccionRelacionada.class
 apiTrackline\proyectoPTC\Exceptions\UsuarioExceptions\ExceptionUsuarioNoEncontrado.class
+apiTrackline\proyectoPTC\Entities\TipoClienteEntity.class
 apiTrackline\proyectoPTC\Exceptions\TipoDatoContableExceptions\ExceptionTipoDatoContableNoEncontrado.class
 apiTrackline\proyectoPTC\Entities\EmpleadosEntity.class
 apiTrackline\proyectoPTC\Entities\OrdenEncabezadoEntity.class
@@ -67,6 +68,7 @@ apiTrackline\proyectoPTC\Entities\PermisosEntity.class
 apiTrackline\proyectoPTC\Exceptions\TipoDatoContableExceptions\ExceptionTipoDatoContableNoRegistrado.class
 apiTrackline\proyectoPTC\Repositories\EstadosRepository.class
 apiTrackline\proyectoPTC\Services\OrdenPermisosService.class
+apiTrackline\proyectoPTC\Models\DTO\DTOTipoCliente.class
 apiTrackline\proyectoPTC\Entities\ViajeEntity.class
 apiTrackline\proyectoPTC\Exceptions\ObservacionesExceptions\ExceptionObservacionRelacionada.class
 apiTrackline\proyectoPTC\Exceptions\UsuarioExceptions\ExceptionUsuarioNoRegistrado.class
@@ -169,6 +171,7 @@ apiTrackline\proyectoPTC\Models\DTO\DTOTransporte.class
 apiTrackline\proyectoPTC\Exceptions\UsuarioExceptions\ExceptionRolNoEncontrado.class
 apiTrackline\proyectoPTC\Utils\JWTUtils.class
 apiTrackline\proyectoPTC\Models\DTO\DTOUsuario.class
+apiTrackline\proyectoPTC\Repositories\TipoClienteRepository.class
 apiTrackline\proyectoPTC\Repositories\ObservacionesRepository.class
 apiTrackline\proyectoPTC\Models\DTO\DTOPermisos$OnCreate.class
 apiTrackline\proyectoPTC\Models\DTO\DTOTransporte$OnUpdate.class
@@ -180,6 +183,7 @@ apiTrackline\proyectoPTC\Exceptions\TrackingExceptions\ExceptionTrackingRelacion
 apiTrackline\proyectoPTC\Entities\SelectivoEntity.class
 apiTrackline\proyectoPTC\Services\RecoleccionService.class
 apiTrackline\proyectoPTC\Models\DTO\DTOServicioTransporte.class
+apiTrackline\proyectoPTC\Services\TipoClienteService.class
 apiTrackline\proyectoPTC\Exceptions\RecoleccionExceptions\ExceptionRecoleccionNoEncontrado.class
 apiTrackline\proyectoPTC\Models\DTO\DTOEmpleados$OnPatch.class
 apiTrackline\proyectoPTC\Exceptions\FinanciamientoExceptions\ExceptionFinanciamientoNoEncontrado.class
@@ -203,6 +207,7 @@ apiTrackline\proyectoPTC\Models\DTO\DTOSelectivo.class
 apiTrackline\proyectoPTC\Utils\PasswordGenerator.class
 apiTrackline\proyectoPTC\Models\DTO\DTOCargos.class
 apiTrackline\proyectoPTC\Models\DTO\DTOOrdenEncabezado.class
+apiTrackline\proyectoPTC\Controllers\TipoClienteController\TipoCliente.class
 apiTrackline\proyectoPTC\Utils\JwtCookieAuthFilter.class
 apiTrackline\proyectoPTC\Models\DTO\DTOAduana.class
 apiTrackline\proyectoPTC\Config\Argon2\Argon2Password.class
@@ -213,6 +218,7 @@ apiTrackline\proyectoPTC\Exceptions\FinanciamientoExceptions\ExceptionFinanciami
 apiTrackline\proyectoPTC\Exceptions\TransporteExceptions\ExceptionTransporteRelacionado.class
 apiTrackline\proyectoPTC\Models\DTO\DTOCargos$OnUpdate.class
 apiTrackline\proyectoPTC\Models\DTO\DTOOrdenPermisos.class
+apiTrackline\proyectoPTC\Exceptions\ClientesExceptions\ExceptionTipoClienteNoEncontrado.class
 apiTrackline\proyectoPTC\Models\DTO\DTOTracking$OnUpdate.class
 apiTrackline\proyectoPTC\Services\SelectivoService.class
 apiTrackline\proyectoPTC\ServletInitializer.class

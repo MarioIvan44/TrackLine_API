@@ -49,6 +49,13 @@ public class DTOClientes {
     private Long idRol;
     private String nombreRol;
 
+    //Clientes ------> TipoCliente
+    @Positive(message = "El id del tipo cliente no puede ser negativo", groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
+    @NotNull(message = "El id tipo cliente no puede ser nulo", groups = {OnCreate.class, OnUpdate.class})
+    private Long idTipoCliente;
+    private String tipoCliente;
+
+
     public interface OnCreate{}
     public interface OnUpdate{}
     public interface OnPatch{}

@@ -21,6 +21,7 @@ C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackl
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Controllers\RolesController\Roles.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Controllers\SelectivoController\Selectivo.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Controllers\ServicioTransporteController\ServicioTransporte.java
+C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Controllers\TipoClienteController\TipoCliente.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Controllers\TipoDatoContableController\TipoDatoContable.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Controllers\TipoFinanciamientosController\TipoFinanciamiento.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Controllers\TipoServicioController\TipoServicio.java
@@ -45,6 +46,7 @@ C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackl
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Entities\RolesEntity.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Entities\SelectivoEntity.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Entities\ServicioTransporteEntity.java
+C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Entities\TipoClienteEntity.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Entities\TipoDatoContableEntity.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Entities\TipoFinanciamientosEntity.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Entities\TipoServicioEntity.java
@@ -62,6 +64,7 @@ C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackl
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Exceptions\ClientesExceptions\ExceptionClienteNoRegistrado.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Exceptions\ClientesExceptions\ExceptionClienteUsuarioNoEncontrado.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Exceptions\ClientesExceptions\ExceptionClienteUsuarioYaAsignado.java
+C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Exceptions\ClientesExceptions\ExceptionTipoClienteNoEncontrado.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Exceptions\EmpleadosExceptions\ExceptionEmpleadoNoEncontrado.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Exceptions\EmpleadosExceptions\ExceptionEmpleadoNoRegistrado.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Exceptions\EmpleadosExceptions\ExceptionEmpleadoRelacionado.java
@@ -137,6 +140,7 @@ C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackl
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Models\DTO\DTORoles.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Models\DTO\DTOSelectivo.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Models\DTO\DTOServicioTransporte.java
+C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Models\DTO\DTOTipoCliente.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Models\DTO\DTOTipoDatoContable.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Models\DTO\DTOTipoFinanciamientos.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Models\DTO\DTOTipoServicio.java
@@ -162,6 +166,7 @@ C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackl
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Repositories\RolesRepository.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Repositories\SelectivoRepository.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Repositories\ServicioTransporteRepository.java
+C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Repositories\TipoClienteRepository.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Repositories\TipoDatoContableRepository.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Repositories\TipoFinanciamientosRepository.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Repositories\TipoServicioRepository.java
@@ -187,6 +192,7 @@ C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackl
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Services\RolesService.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Services\SelectivoService.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Services\ServicioTransporteService.java
+C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Services\TipoClienteService.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Services\TipoDatoContableService.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Services\TipoFinanciamientosService.java
 C:\Users\mario\OneDrive\Desktop\PTCTRACKLINE\proyectoPTC\src\main\java\apiTrackline\proyectoPTC\Services\TipoServicioService.java
