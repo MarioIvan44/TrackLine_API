@@ -1,77 +1,148 @@
 package apiTrackline.proyectoPTC.Services;
 
 import apiTrackline.proyectoPTC.Entities.OrdenPermisosEntity;
+import apiTrackline.proyectoPTC.Entities.OrdenServicioEntity;
+import apiTrackline.proyectoPTC.Entities.PermisosEntity;
+import apiTrackline.proyectoPTC.Exceptions.EstadosExceptions.ExceptionOrdenServicioNoEncontrado;
+import apiTrackline.proyectoPTC.Exceptions.OrdenPermisoExceptions.ExceptionOrdenPermisoNoEncontrado;
+import apiTrackline.proyectoPTC.Exceptions.OrdenPermisoExceptions.ExceptionOrdenPermisoNoRegistrado;
+import apiTrackline.proyectoPTC.Exceptions.OrdenPermisoExceptions.ExceptionOrdenPermisoRelacionado;
+import apiTrackline.proyectoPTC.Exceptions.PermisosExceptions.ExceptionPermisoNoEncontrado;
 import apiTrackline.proyectoPTC.Models.DTO.DTOOrdenPermisos;
 import apiTrackline.proyectoPTC.Repositories.OrdenPermisosRepository;
+import apiTrackline.proyectoPTC.Repositories.OrdenServicioRepository;
 import apiTrackline.proyectoPTC.Repositories.PermisosRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 public class OrdenPermisosService {
-    @Autowired
-    private OrdenPermisosRepository repository;
 
     @Autowired
-    private PermisosRepository permisoRepository;
+    private OrdenPermisosRepository repo;
 
-    public List<DTOOrdenPermisos> getData() {
-        return repository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
+    @Autowired
+    private PermisosRepository permisosRepo;
+
+    @Autowired
+    private OrdenServicioRepository ordenServiciosRepo;
+
+    // Obtener lista paginada
+    public Page<DTOOrdenPermisos> obtenerOrdenesPermisos(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<OrdenPermisosEntity> pageEntity = repo.findAll(pageable);
+        return pageEntity.map(this::convertirADTO);
     }
 
-    public String post(DTOOrdenPermisos dto) {
-        OrdenPermisosEntity entity = convertToEntity(dto);
+    // Buscar por ID
+    public DTOOrdenPermisos buscarOrdenPermisoPorId(Long id) {
+        OrdenPermisosEntity entity = repo.findById(id)
+                .orElseThrow(() -> new ExceptionOrdenPermisoNoEncontrado(
+                        "OrdenPermiso no encontrada con id " + id));
+        return convertirADTO(entity);
+    }
 
-        if (dto.getIdPermiso() != null && permisoRepository.findById(dto.getIdPermiso()).isEmpty()) {
-            return "Permiso no encontrado. No se pudo guardar la orden.";
+    // Crear nueva ordenPermiso
+    public DTOOrdenPermisos agregarOrdenPermiso(DTOOrdenPermisos dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("No puedes agregar un registro sin datos");
         }
 
-        repository.save(entity);
-        return "Orden creada correctamente.";
-    }
+        PermisosEntity permiso = permisosRepo.findById(dto.getIdPermiso())
+                .orElseThrow(() -> new ExceptionPermisoNoEncontrado(
+                        "Permiso no encontrado con id " + dto.getIdPermiso()));
 
+        OrdenServicioEntity ordenServicio = ordenServiciosRepo.findById(dto.getIdOrdenServicio())
+                .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado(
+                        "Orden de servicio no encontrada con id " + dto.getIdOrdenServicio()));
 
-
-    public String update(Long id, DTOOrdenPermisos dto) {
-        Optional<OrdenPermisosEntity> optional = repository.findById(id);
-        if (optional.isPresent()) {
-            OrdenPermisosEntity entity = optional.get();
+        try {
+            OrdenPermisosEntity entity = new OrdenPermisosEntity();
             entity.setMarcado(dto.getMarcado());
+            entity.setIdPermiso(permiso);
+            entity.setOrdenServicioPermisos(ordenServicio);
 
-            if (dto.getIdPermiso() != null) {
-                Optional<?> permiso = permisoRepository.findById(dto.getIdPermiso());
-                if (permiso.isEmpty()) {
-                    return "Permiso no encontrado. No se pudo actualizar la orden.";
-                }
-                entity.setIdPermiso((apiTrackline.proyectoPTC.Entities.PermisosEntity) permiso.get());
-            }
-
-            repository.save(entity);
-            return "Orden actualizada correctamente.";
-        } else {
-            return "Orden no encontrada.";
+            OrdenPermisosEntity creada = repo.save(entity);
+            return convertirADTO(creada);
+        } catch (Exception e) {
+            log.error("Error al registrar la ordenPermiso: " + e.getMessage());
+            throw new ExceptionOrdenPermisoNoRegistrado("Error: OrdenPermiso no registrada");
         }
     }
 
-    public String patch(Long id, DTOOrdenPermisos dto) {
-        return update(id, dto); // misma lógica de validación y mensaje
+    // 🔹 Actualizar (PUT)
+    public DTOOrdenPermisos actualizarOrdenPermiso(Long id, DTOOrdenPermisos dto) {
+        OrdenPermisosEntity entity = repo.findById(id)
+                .orElseThrow(() -> new ExceptionOrdenPermisoNoEncontrado(
+                        "OrdenPermiso no encontrada con id " + id));
+
+        entity.setMarcado(dto.getMarcado());
+
+        if (dto.getIdPermiso() != null) {
+            PermisosEntity permiso = permisosRepo.findById(dto.getIdPermiso())
+                    .orElseThrow(() -> new ExceptionPermisoNoEncontrado(
+                            "Permiso no encontrado con id " + dto.getIdPermiso()));
+            entity.setIdPermiso(permiso);
+        }
+
+        if (dto.getIdOrdenServicio() != null) {
+            OrdenServicioEntity ordenServicio = ordenServiciosRepo.findById(dto.getIdOrdenServicio())
+                    .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado(
+                            "Orden de servicio no encontrada con id " + dto.getIdOrdenServicio()));
+            entity.setOrdenServicioPermisos(ordenServicio);
+        }
+
+        return convertirADTO(repo.save(entity));
     }
 
-    public String delete(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-            return "Orden eliminada correctamente.";
-        } else {
-            return "Orden no encontrada.";
+    // 🔹 Actualización parcial (PATCH)
+    public DTOOrdenPermisos patchOrdenPermiso(Long id, DTOOrdenPermisos dto) {
+        OrdenPermisosEntity entity = repo.findById(id)
+                .orElseThrow(() -> new ExceptionOrdenPermisoNoEncontrado(
+                        "OrdenPermiso no encontrada con id " + id));
+
+        if (dto.getMarcado() != null) entity.setMarcado(dto.getMarcado());
+
+        if (dto.getIdPermiso() != null) {
+            PermisosEntity permiso = permisosRepo.findById(dto.getIdPermiso())
+                    .orElseThrow(() -> new ExceptionPermisoNoEncontrado(
+                            "Permiso no encontrado con id " + dto.getIdPermiso()));
+            entity.setIdPermiso(permiso);
+        }
+
+        if (dto.getIdOrdenServicio() != null) {
+            OrdenServicioEntity ordenServicio = ordenServiciosRepo.findById(dto.getIdOrdenServicio())
+                    .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado(
+                            "Orden de servicio no encontrada con id " + dto.getIdOrdenServicio()));
+            entity.setOrdenServicioPermisos(ordenServicio);
+        }
+
+        return convertirADTO(repo.save(entity));
+    }
+
+    // 🔹 Eliminar
+    public String eliminarOrdenPermiso(Long id) {
+        OrdenPermisosEntity entity = repo.findById(id)
+                .orElseThrow(() -> new ExceptionOrdenPermisoNoEncontrado(
+                        "OrdenPermiso no encontrada con id " + id));
+
+        try {
+            repo.delete(entity);
+            return "OrdenPermiso eliminada correctamente";
+        } catch (DataIntegrityViolationException e) {
+            throw new ExceptionOrdenPermisoRelacionado(
+                    "No se pudo eliminar la OrdenPermiso porque tiene registros relacionados");
         }
     }
 
-
-    private DTOOrdenPermisos convertToDTO(OrdenPermisosEntity entity) {
+    // Conversión Entity → DTO
+    private DTOOrdenPermisos convertirADTO(OrdenPermisosEntity entity) {
         DTOOrdenPermisos dto = new DTOOrdenPermisos();
         dto.setIdOrdenPermisos(entity.getIdOrdenPermisos());
         dto.setMarcado(entity.getMarcado());
@@ -80,18 +151,12 @@ public class OrdenPermisosService {
             dto.setIdPermiso(entity.getIdPermiso().getIdPermiso());
             dto.setNombrePermiso(entity.getIdPermiso().getNombrePermiso());
         }
-        return dto;
-    }
 
-    private OrdenPermisosEntity convertToEntity(DTOOrdenPermisos dto) {
-        OrdenPermisosEntity entity = new OrdenPermisosEntity();
-        entity.setIdOrdenPermisos(dto.getIdOrdenPermisos());
-        entity.setMarcado(dto.getMarcado());
-
-        if (dto.getIdPermiso() != null) {
-            permisoRepository.findById(dto.getIdPermiso()).ifPresent(entity::setIdPermiso);
+        if (entity.getOrdenServicioPermisos() != null) {
+            dto.setIdOrdenServicio(entity.getOrdenServicioPermisos().getIdOrdenServicio());
+            dto.setClienteNIT(entity.getOrdenServicioPermisos().getClienteNIT());
         }
 
-        return entity;
+        return dto;
     }
 }

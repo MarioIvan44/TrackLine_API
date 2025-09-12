@@ -33,6 +33,7 @@ public class TipoDatoContableService {
         DTOTipoDatoContable dto = new DTOTipoDatoContable();
         dto.setIdTipoDatoContable(entity.getIdTipoDatoContable());
         dto.setNombre(entity.getNombre());
+        dto.setPrecioUni(entity.getPrecioUni());
         return dto;
     }
 
@@ -41,6 +42,7 @@ public class TipoDatoContableService {
         TipoDatoContableEntity entity = new TipoDatoContableEntity();
         entity.setIdTipoDatoContable(dto.getIdTipoDatoContable());
         entity.setNombre(dto.getNombre());
+        entity.setPrecioUni(dto.getPrecioUni());
         return entity;
     }
 
@@ -65,6 +67,7 @@ public class TipoDatoContableService {
                 .orElseThrow(() -> new ExceptionTipoDatoContableNoEncontrado("No se encontró el tipo de dato contable con id " + id));
 
         entity.setNombre(dto.getNombre());
+        entity.setPrecioUni(dto.getPrecioUni());
 
         return convertirAContableDTO(repo.save(entity));
     }
@@ -75,7 +78,7 @@ public class TipoDatoContableService {
                 .orElseThrow(() -> new ExceptionTipoDatoContableNoEncontrado("No se encontró el tipo de dato contable con id " + id));
 
         if (dto.getNombre() != null) entity.setNombre(dto.getNombre());
-
+        if (dto.getPrecioUni() != null) entity.setPrecioUni(dto.getPrecioUni());
         return convertirAContableDTO(repo.save(entity));
     }
 

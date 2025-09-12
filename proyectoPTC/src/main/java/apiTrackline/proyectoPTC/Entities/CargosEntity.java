@@ -1,7 +1,12 @@
 package apiTrackline.proyectoPTC.Entities;
 
+import apiTrackline.proyectoPTC.Models.DTO.DTOCargos;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "TB_CARGOS")
@@ -10,7 +15,6 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 public class CargosEntity {
-
 
     @Id
     //generator: Generador en código Java
@@ -25,6 +29,17 @@ public class CargosEntity {
     @JoinColumn(name = "IDTIPODATOCONTABLE", referencedColumnName = "IDTIPODATOCONTABLE")
     private TipoDatoContableEntity tipoDatoContable;
 
+    @ManyToOne
+    @JoinColumn(name = "IDORDENSERVICIO", referencedColumnName = "IDORDENSERVICIO")
+    private OrdenServicioEntity ordenServicioCargos;
+
     @Column(name = "MONTO")
-    private Long monto;
+    private Double monto;
+
+    @Column(name = "CANTIDAD")
+    private Long cantidad;
+
+    @Transient
+    private BigDecimal total;
+
 }

@@ -185,7 +185,6 @@ public class ClientesService {
                 entity.setUsuario(usuario);
             }
 
-
             if(dto.getIdTipoCliente() != null){
                 TipoClienteEntity tipoCliente = tipoClienteRepo.findById(dto.getIdTipoCliente())
                         .orElseThrow(() -> new ExceptionTipoClienteNoEncontrado(

@@ -1,7 +1,7 @@
 package apiTrackline.proyectoPTC.Controllers.OrdenServicioController;
 
 import apiTrackline.proyectoPTC.Exceptions.AduanaExceptions.ExceptionAduanaNoEncontrada;
-import apiTrackline.proyectoPTC.Exceptions.CargosExceptions.ExceptionCargosNoEncontrado;
+import apiTrackline.proyectoPTC.Exceptions.CargosExceptions.ExceptionCargoNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.ClientesExceptions.ExceptionClienteNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.EstadosExceptions.ExceptionOrdenServicioNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.FinanciamientoExceptions.ExceptionFinanciamientoNoEncontrado;
@@ -12,10 +12,8 @@ import apiTrackline.proyectoPTC.Exceptions.OrdenServicioExceptions.ExceptionOrde
 import apiTrackline.proyectoPTC.Exceptions.OrdenServicioExceptions.ExceptionOrdenServicioRelacionada;
 import apiTrackline.proyectoPTC.Exceptions.RecoleccionExceptions.ExceptionRecoleccionNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.TransporteExceptions.ExceptionTransporteNoEncontrado;
-import apiTrackline.proyectoPTC.Models.DTO.DTOAduana;
 import apiTrackline.proyectoPTC.Models.DTO.DTOOrdenServicio;
 import apiTrackline.proyectoPTC.Services.OrdenServicioService;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -187,7 +184,7 @@ public class OrdenServicio {
         } catch (ExceptionClienteNoEncontrado | ExceptionOrdenEncabezadoNoEncontrado |
                  ExceptionInfoEmbarqueNoEncontrado | ExceptionAduanaNoEncontrada |
                  ExceptionTransporteNoEncontrado | ExceptionRecoleccionNoEncontrado |
-                 ExceptionCargosNoEncontrado | ExceptionFinanciamientoNoEncontrado |
+                 ExceptionCargoNoEncontrado | ExceptionFinanciamientoNoEncontrado |
                  ExceptionObservacionNoEncontrada llaveForaneaNoEncontrada) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                     "status", "Error",

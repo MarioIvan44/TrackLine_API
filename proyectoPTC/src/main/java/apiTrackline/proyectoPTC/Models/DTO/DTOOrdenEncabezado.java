@@ -20,7 +20,6 @@ import java.time.LocalDate;
 public class DTOOrdenEncabezado {
 
     private Long IdOrdenEncabezado;
-
     //@PastOrPresent(message = "La fecha solo puede ")
 
     @NotNull(message = "La fecha no puede estar en blanco.", groups = {OnCreate.class, OnUpdate.class})

@@ -38,6 +38,7 @@ public class TipoFinanciamientosService {
         DTOTipoFinanciamientos dto = new DTOTipoFinanciamientos();
         dto.setIdTipoFinanciamiento(entity.getIdTipoFinanciamiento());
         dto.setNombre(entity.getNombre());
+        dto.setPrecioUni(entity.getPrecioUni());
         return dto;
     }
 
@@ -46,6 +47,7 @@ public class TipoFinanciamientosService {
         TipoFinanciamientosEntity entity = new TipoFinanciamientosEntity();
         entity.setIdTipoFinanciamiento(dto.getIdTipoFinanciamiento());
         entity.setNombre(dto.getNombre());
+        entity.setPrecioUni(dto.getPrecioUni());
         return entity;
     }
 
@@ -62,12 +64,13 @@ public class TipoFinanciamientosService {
         try {
             TipoFinanciamientosEntity entity = new TipoFinanciamientosEntity();
             entity.setNombre(dto.getNombre());
+            entity.setPrecioUni(dto.getPrecioUni());
 
             TipoFinanciamientosEntity creado = repo.save(entity);
             return convertirATipoFinanciamientoDTO(creado);
 
         } catch (Exception e) {
-            log.error("Error al registrar el TipoFinanciamiento", e);
+            log.error("Error al registrar el Tipo de Financiamiento", e);
             throw new ExceptionTipoFinanciamientoNoRegistrado("Error: Tipo de financiamiento no registrado");
         }
     }
@@ -83,7 +86,7 @@ public class TipoFinanciamientosService {
             throw new ExceptionTipoFinanciamientoDuplicado("Ya existe un tipo financiamiento con el nombre: " + dto.getNombre());
         }
         entity.setNombre(dto.getNombre());
-
+        entity.setPrecioUni(dto.getPrecioUni());
         return convertirATipoFinanciamientoDTO(repo.save(entity));
     }
 
@@ -97,6 +100,10 @@ public class TipoFinanciamientosService {
                 throw new IllegalArgumentException("El nombre no puede estar vacío");
             }
             entity.setNombre(dto.getNombre());
+        }
+
+        if (dto.getPrecioUni() != null) {
+            entity.setPrecioUni(dto.getPrecioUni());
         }
 
         if (dto.getNombre() != null && !dto.getNombre().isBlank()) {

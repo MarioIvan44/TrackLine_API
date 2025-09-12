@@ -32,4 +32,6 @@ public class TipoServicioEntity {
     //Atributo extra para hacer una relación
     @OneToMany(mappedBy = "tipoServicio", cascade = CascadeType.ALL)
     private List<TipoServicioEntity> Servicios = new ArrayList<>();
+
+
 }

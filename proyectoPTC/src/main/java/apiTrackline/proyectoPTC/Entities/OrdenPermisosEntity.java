@@ -25,4 +25,8 @@ public class OrdenPermisosEntity {
     
     @Column(name = "MARCADO")
     private Boolean marcado;
+
+    @ManyToOne
+    @JoinColumn(name = "IDORDENSERVICIO", referencedColumnName = "IDORDENSERVICIO")
+    private OrdenServicioEntity ordenServicioPermisos;
 }

@@ -1,6 +1,5 @@
 package apiTrackline.proyectoPTC.Models.DTO;
 
-import apiTrackline.proyectoPTC.Entities.UsuarioEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.EqualsAndHashCode;
@@ -23,7 +22,7 @@ public class DTOEmpleados {
     private String apellido;
 
     @Size(max = 15, message = "El máximo de caracteres para el campo 'telefono' es 15", groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
-    private  String telefono;
+    private String telefono;
 
     @Email
     @Pattern(

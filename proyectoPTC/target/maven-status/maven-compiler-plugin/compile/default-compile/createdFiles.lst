@@ -59,6 +59,7 @@ apiTrackline\proyectoPTC\Repositories\OrdenServicioRepository.class
 apiTrackline\proyectoPTC\Exceptions\ValidacionesGlobales\ValidacionGlobalHandler.class
 apiTrackline\proyectoPTC\Exceptions\ClientesExceptions\ExceptionClienteUsuarioYaAsignado.class
 apiTrackline\proyectoPTC\Entities\TransportistaEntity.class
+apiTrackline\proyectoPTC\Exceptions\OrdenPermisoExceptions\ExceptionOrdenPermisoNoEncontrado.class
 apiTrackline\proyectoPTC\Exceptions\InfoEmbarqueExceptions\ExceptionInfoEmbarqueNoRegistrado.class
 apiTrackline\proyectoPTC\Services\CargosService.class
 apiTrackline\proyectoPTC\Exceptions\OrdenEncabezadoExceptions\ExceptionOrdenEncabezadoRelacionado.class
@@ -95,6 +96,7 @@ apiTrackline\proyectoPTC\Exceptions\EstadosExceptions\ExceptionEstadoRelacionado
 apiTrackline\proyectoPTC\Entities\InfoEmbarqueEntity.class
 apiTrackline\proyectoPTC\Models\DTO\DTOTipoServicio.class
 apiTrackline\proyectoPTC\Exceptions\ViajeExceptions\ExceptionViajeRelacionada.class
+apiTrackline\proyectoPTC\Exceptions\CargosExceptions\ExceptionCargoNoEncontrado.class
 apiTrackline\proyectoPTC\Models\DTO\DTOPermisos$OnUpdate.class
 apiTrackline\proyectoPTC\Services\EmpleadosService.class
 apiTrackline\proyectoPTC\Models\DTO\DTOFinanciamiento.class
@@ -116,10 +118,12 @@ apiTrackline\proyectoPTC\Config\Cloudinary\CloudinaryConfig.class
 apiTrackline\proyectoPTC\Exceptions\ViajeExceptions\ExceptionViajeNoEncontrado.class
 apiTrackline\proyectoPTC\Models\DTO\DTOViaje$OnCreate.class
 apiTrackline\proyectoPTC\Exceptions\InfoEmbarqueExceptions\ExceptionInfoEmbarqueRelacionado.class
+apiTrackline\proyectoPTC\Exceptions\CargosExceptions\ExceptionCargoRelacionado.class
 apiTrackline\proyectoPTC\Exceptions\TrackingExceptions\ExceptionTrackingNoEncontrado.class
 apiTrackline\proyectoPTC\Models\DTO\DTOEstados$OnPatch.class
 apiTrackline\proyectoPTC\Models\DTO\DTOTipoFinanciamientos.class
 apiTrackline\proyectoPTC\Controllers\RecoleccionController\Recoleccion.class
+apiTrackline\proyectoPTC\Exceptions\OrdenPermisoExceptions\ExceptionOrdenPermisoRelacionado.class
 apiTrackline\proyectoPTC\Entities\OrdenPermisosEntity.class
 apiTrackline\proyectoPTC\Exceptions\ObservacionesExceptions\ExceptionObservacionNoEncontrada.class
 apiTrackline\proyectoPTC\Models\DTO\DTOTracking$OnPatch.class
@@ -154,12 +158,12 @@ apiTrackline\proyectoPTC\Controllers\TransporteController\Transporte.class
 apiTrackline\proyectoPTC\Models\DTO\DTOTracking$OnCreate.class
 apiTrackline\proyectoPTC\Entities\TipoFinanciamientosEntity.class
 apiTrackline\proyectoPTC\Models\DTO\DTOTipoDatoContable$OnPatch.class
+apiTrackline\proyectoPTC\Exceptions\FinanciamientoExceptions\ExceptionFinanciamientoNoRegistrado.class
 apiTrackline\proyectoPTC\Repositories\EmpleadosRepository.class
 apiTrackline\proyectoPTC\Exceptions\EstadosExceptions\ExceptionEstadoNoEncontrado.class
 apiTrackline\proyectoPTC\Models\DTO\DTOPermisos$OnPatch.class
 apiTrackline\proyectoPTC\Exceptions\ServicioTransporteExceptions\ExceptionServicioTransporteNoRegistrado.class
 apiTrackline\proyectoPTC\Repositories\OrdenPermisosRepository.class
-apiTrackline\proyectoPTC\Exceptions\CargosExceptions\ExceptionCargosNoEncontrado.class
 apiTrackline\proyectoPTC\Exceptions\PermisosExceptions\ExceptionPermisoNoEncontrado.class
 apiTrackline\proyectoPTC\Repositories\ServicioTransporteRepository.class
 apiTrackline\proyectoPTC\Controllers\OrdenPermisosController\OrdenPermisos.class
@@ -177,6 +181,7 @@ apiTrackline\proyectoPTC\Models\DTO\DTOPermisos$OnCreate.class
 apiTrackline\proyectoPTC\Models\DTO\DTOTransporte$OnUpdate.class
 apiTrackline\proyectoPTC\Models\DTO\DTOObservaciones$OnUpdate.class
 apiTrackline\proyectoPTC\Controllers\EmpleadosController\Empleados.class
+apiTrackline\proyectoPTC\Exceptions\OrdenPermisoExceptions\ExceptionOrdenPermisoNoRegistrado.class
 apiTrackline\proyectoPTC\Models\DTO\DTORecoleccion.class
 apiTrackline\proyectoPTC\Exceptions\AduanaExceptions\ExceptionAduanaRelacionada.class
 apiTrackline\proyectoPTC\Exceptions\TrackingExceptions\ExceptionTrackingRelacionado.class
@@ -201,6 +206,7 @@ apiTrackline\proyectoPTC\Services\PermisosService.class
 apiTrackline\proyectoPTC\Controllers\ClientesController\Clientes.class
 apiTrackline\proyectoPTC\Services\InfoEmbarqueService.class
 apiTrackline\proyectoPTC\Models\DTO\DTOObservaciones$OnPatch.class
+apiTrackline\proyectoPTC\Exceptions\CargosExceptions\ExceptionCargoNoRegistrado.class
 apiTrackline\proyectoPTC\Entities\EstadosEntity.class
 apiTrackline\proyectoPTC\Models\DTO\DTOOrdenServicio$OnPatch.class
 apiTrackline\proyectoPTC\Models\DTO\DTOSelectivo.class

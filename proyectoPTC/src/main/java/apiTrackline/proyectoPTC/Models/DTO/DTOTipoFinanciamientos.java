@@ -1,9 +1,6 @@
 package apiTrackline.proyectoPTC.Models.DTO;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,4 +16,7 @@ public class DTOTipoFinanciamientos {
     @Size(min = 4, max = 30,message = "El nombre solo puede contener 4 caracteres como mínimo y 30 como máximo")
     @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$")
     private String nombre;
+
+    @Positive(message = "El precio unitario no puede ser negativo")
+    private Double precioUni;
 }

@@ -21,5 +21,8 @@ public class TipoFinanciamientosEntity {
 
     @Column(name = "NOMBRE")
     private String nombre;
+
+    @Column(name = "PRECIOUNI")
+    private Double precioUni;
 }
 

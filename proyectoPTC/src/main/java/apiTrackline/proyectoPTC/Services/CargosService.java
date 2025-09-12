@@ -1,17 +1,28 @@
 package apiTrackline.proyectoPTC.Services;
 
 import apiTrackline.proyectoPTC.Entities.CargosEntity;
+import apiTrackline.proyectoPTC.Entities.OrdenServicioEntity;
 import apiTrackline.proyectoPTC.Entities.TipoDatoContableEntity;
+import apiTrackline.proyectoPTC.Exceptions.CargosExceptions.ExceptionCargoNoEncontrado;
+import apiTrackline.proyectoPTC.Exceptions.CargosExceptions.ExceptionCargoNoRegistrado;
+import apiTrackline.proyectoPTC.Exceptions.CargosExceptions.ExceptionCargoRelacionado;
+import apiTrackline.proyectoPTC.Exceptions.EstadosExceptions.ExceptionOrdenServicioNoEncontrado;
+import apiTrackline.proyectoPTC.Exceptions.TipoDatoContableExceptions.ExceptionTipoDatoContableNoEncontrado;
 import apiTrackline.proyectoPTC.Models.DTO.DTOCargos;
 import apiTrackline.proyectoPTC.Repositories.CargosRepository;
+import apiTrackline.proyectoPTC.Repositories.OrdenServicioRepository;
 import apiTrackline.proyectoPTC.Repositories.TipoDatoContableRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.math.BigDecimal;
 
+@Slf4j
 @Service
 public class CargosService {
 
@@ -21,90 +32,145 @@ public class CargosService {
     @Autowired
     private TipoDatoContableRepository tipoDatoRepo;
 
-    public List<DTOCargos> getData() {
-        List<CargosEntity> lista = repo.findAll();
-        return lista.stream().map(this::convertirADTO).collect(Collectors.toList());
+    @Autowired
+    private OrdenServicioRepository ordenServicioRepo;
+
+    // Obtener lista paginada
+    public Page<DTOCargos> obtenerCargos(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CargosEntity> pageEntity = repo.findAll(pageable);
+        return pageEntity.map(this::convertirADTO);
     }
 
-    private DTOCargos convertirADTO(CargosEntity c) {
-        DTOCargos dto = new DTOCargos();
-        dto.setIdCargos(c.getIdCargos());
-        dto.setMonto(c.getMonto());
-        if (c.getTipoDatoContable() != null) {
-            dto.setIdTipoDatoContable(c.getTipoDatoContable().getIdTipoDatoContable());
-            dto.setNombreTipoDatoContable(c.getTipoDatoContable().getNombre());
+    // Buscar por ID
+    public DTOCargos buscarCargoPorId(Long id) {
+        CargosEntity entity = repo.findById(id)
+                .orElseThrow(() -> new ExceptionCargoNoEncontrado("Cargo no encontrado con id " + id));
+        return convertirADTO(entity);
+    }
+
+    // Crear nuevo cargo
+    public DTOCargos agregarCargo(DTOCargos dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("No puedes agregar un registro sin datos");
         }
-        return dto;
-    }
 
-    public String post(DTOCargos dto) {
+        TipoDatoContableEntity tipo = tipoDatoRepo.findById(dto.getIdTipoDatoContable())
+                .orElseThrow(() -> new ExceptionTipoDatoContableNoEncontrado(
+                        "Tipo de dato contable no encontrado con id " + dto.getIdTipoDatoContable()));
+
+        OrdenServicioEntity orden = null;
+        if (dto.getIdOrdenServicio() != null) {
+            orden = ordenServicioRepo.findById(dto.getIdOrdenServicio())
+                    .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado(
+                            "Orden de servicio no encontrada con id " + dto.getIdOrdenServicio()));
+        }
+
         try {
-            CargosEntity c = new CargosEntity();
-            Optional<TipoDatoContableEntity> tipo = tipoDatoRepo.findById(dto.getIdTipoDatoContable());
-            if (tipo.isEmpty()) return "Tipo de dato contable no encontrado.";
+            CargosEntity entity = new CargosEntity();
+            entity.setTipoDatoContable(tipo);
+            entity.setOrdenServicioCargos(orden);
+            entity.setMonto(dto.getMonto());
+            entity.setCantidad(dto.getCantidad());
 
-            c.setTipoDatoContable(tipo.get());
-            c.setMonto(dto.getMonto());
-            repo.save(c);
-            return "Cargo creado correctamente.";
+            CargosEntity creada = repo.save(entity);
+            return convertirADTO(creada);
         } catch (Exception e) {
-            return "Error al crear cargo: " + e.getMessage();
+            log.error("Error al registrar el cargo: " + e.getMessage());
+            throw new ExceptionCargoNoRegistrado("Error: Cargo no registrado");
         }
     }
 
-    public String update(Long id, DTOCargos dto) {
-        Optional<CargosEntity> optional = repo.findById(id);
-        if (optional.isEmpty()) {
-            return "Cargo no encontrado.";
-        }
+    // 🔹 Actualizar (PUT)
+    public DTOCargos actualizarCargo(Long id, DTOCargos dto) {
+        CargosEntity entity = repo.findById(id)
+                .orElseThrow(() -> new ExceptionCargoNoEncontrado("Cargo no encontrado con id " + id));
 
-        CargosEntity c = optional.get();
-        c.setMonto(dto.getMonto());
+        entity.setMonto(dto.getMonto());
+        entity.setCantidad(dto.getCantidad());
 
         if (dto.getIdTipoDatoContable() != null) {
-            Optional<TipoDatoContableEntity> tipo = tipoDatoRepo.findById(dto.getIdTipoDatoContable());
-            if (tipo.isEmpty()) {
-                return "Tipo de dato contable no encontrado.";
-            }
-            c.setTipoDatoContable(tipo.get());
+            TipoDatoContableEntity tipo = tipoDatoRepo.findById(dto.getIdTipoDatoContable())
+                    .orElseThrow(() -> new ExceptionTipoDatoContableNoEncontrado(
+                            "Tipo de dato contable no encontrado con id " + dto.getIdTipoDatoContable()));
+            entity.setTipoDatoContable(tipo);
         }
 
-        repo.save(c);
-        return "Cargo actualizado correctamente.";
+        if (dto.getIdOrdenServicio() != null) {
+            OrdenServicioEntity orden = ordenServicioRepo.findById(dto.getIdOrdenServicio())
+                    .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado(
+                            "Orden de servicio no encontrada con id " + dto.getIdOrdenServicio()));
+            entity.setOrdenServicioCargos(orden);
+        }
+
+        return convertirADTO(repo.save(entity));
     }
 
+    // 🔹 Actualización parcial (PATCH)
+    public DTOCargos patchCargo(Long id, DTOCargos dto) {
+        CargosEntity entity = repo.findById(id)
+                .orElseThrow(() -> new ExceptionCargoNoEncontrado("Cargo no encontrado con id " + id));
 
-    public String patch(Long id, DTOCargos dto) {
-        Optional<CargosEntity> optional = repo.findById(id);
-        if (optional.isEmpty()) {
-            return "Cargo no encontrado.";
-        }
-
-        CargosEntity c = optional.get();
-
-        if (dto.getMonto() != null) {
-            c.setMonto(dto.getMonto());
-        }
+        if (dto.getMonto() != null) entity.setMonto(dto.getMonto());
+        if (dto.getCantidad() != null) entity.setCantidad(dto.getCantidad());
 
         if (dto.getIdTipoDatoContable() != null) {
-            Optional<TipoDatoContableEntity> tipo = tipoDatoRepo.findById(dto.getIdTipoDatoContable());
-            if (tipo.isEmpty()) {
-                return "Tipo de dato contable no encontrado.";
-            }
-            c.setTipoDatoContable(tipo.get());
+            TipoDatoContableEntity tipo = tipoDatoRepo.findById(dto.getIdTipoDatoContable())
+                    .orElseThrow(() -> new ExceptionTipoDatoContableNoEncontrado(
+                            "Tipo de dato contable no encontrado con id " + dto.getIdTipoDatoContable()));
+            entity.setTipoDatoContable(tipo);
         }
 
-        repo.save(c);
-        return "Cargo actualizado parcialmente.";
+        if (dto.getIdOrdenServicio() != null) {
+            OrdenServicioEntity orden = ordenServicioRepo.findById(dto.getIdOrdenServicio())
+                    .orElseThrow(() -> new ExceptionOrdenServicioNoEncontrado(
+                            "Orden de servicio no encontrada con id " + dto.getIdOrdenServicio()));
+            entity.setOrdenServicioCargos(orden);
+        }
+
+        return convertirADTO(repo.save(entity));
     }
 
+    // 🔹 Eliminar
+    public String eliminarCargo(Long id) {
+        CargosEntity entity = repo.findById(id)
+                .orElseThrow(() -> new ExceptionCargoNoEncontrado("Cargo no encontrado con id " + id));
 
-    public String delete(Long id) {
-        if (repo.existsById(id)) {
-            repo.deleteById(id);
-            return "Cargo eliminado correctamente.";
+        try {
+            repo.delete(entity);
+            return "Cargo eliminado correctamente";
+        } catch (DataIntegrityViolationException e) {
+            throw new ExceptionCargoRelacionado(
+                    "No se pudo eliminar el cargo porque tiene registros relacionados");
+        }
+    }
+
+    // Conversión Entity → DTO
+    private DTOCargos convertirADTO(CargosEntity entity) {
+        DTOCargos dto = new DTOCargos();
+        dto.setIdCargos(entity.getIdCargos());
+        dto.setMonto(entity.getMonto());
+        dto.setCantidad(entity.getCantidad());
+
+        // TipoDatoContable
+        if (entity.getTipoDatoContable() != null) {
+            dto.setIdTipoDatoContable(entity.getTipoDatoContable().getIdTipoDatoContable());
+            dto.setNombreTipoDatoContable(entity.getTipoDatoContable().getNombre());
+        }
+
+        // OrdenServicio
+        if (entity.getOrdenServicioCargos() != null) {
+            dto.setIdOrdenServicio(entity.getOrdenServicioCargos().getIdOrdenServicio());
+            dto.setClienteNit(entity.getOrdenServicioCargos().getClienteNIT());
+        }
+
+        // Calcular total en memoria
+        if (entity.getMonto() != null && entity.getCantidad() != null) {
+            dto.setTotal(BigDecimal.valueOf(entity.getMonto()).multiply(BigDecimal.valueOf(entity.getCantidad())));
         } else {
-            return "Cargo no encontrado.";
+            dto.setTotal(BigDecimal.ZERO);
         }
+
+        return dto;
     }
 }

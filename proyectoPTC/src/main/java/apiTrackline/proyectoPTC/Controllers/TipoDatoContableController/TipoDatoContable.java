@@ -25,7 +25,7 @@ public class TipoDatoContable {
     private TipoDatoContableService service;
 
     // MÉTODO GET POR ID
-    // RUTA: localhost:8080/apiAduana/buscarAduanaPorId/{id}
+    // RUTA: localhost:8080/apiTipoDatoContable/buscarDatoContablePorID/{id}
     @GetMapping("/obtenerDatoContablePorId/{id}")
     public ResponseEntity<?> obtenerDatos(@PathVariable Long id) {
         try {

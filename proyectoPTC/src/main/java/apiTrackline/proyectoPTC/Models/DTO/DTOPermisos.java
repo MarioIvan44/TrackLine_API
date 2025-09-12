@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 public class DTOPermisos {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPermiso;
 
     @NotBlank(message = "El nombre del permiso es obligatorio", groups = {OnCreate.class, OnUpdate.class, OnPatch.class})

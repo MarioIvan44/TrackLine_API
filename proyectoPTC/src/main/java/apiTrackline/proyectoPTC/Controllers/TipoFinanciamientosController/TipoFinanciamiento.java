@@ -22,7 +22,6 @@ import java.util.Map;
 @CrossOrigin
 public class TipoFinanciamiento {
 
-
     @Autowired
     private TipoFinanciamientosService service;
 
@@ -53,7 +52,7 @@ public class TipoFinanciamiento {
         }
     }
 
-    // ✅GET - Buscar por ID
+    // GET - Buscar por ID
     @GetMapping("buscarPorId/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {

@@ -58,4 +58,14 @@ public class OrdenServicioEntity {
     //Campos de otras tablas, proporciona el "IdOrdenServicio" a las otras tablas
     @OneToMany(mappedBy = "OrdenServicio", cascade = CascadeType.ALL)
     private List<ViajeEntity> viajes;
+
+    @OneToMany(mappedBy = "ordenServicioPermisos", cascade = CascadeType.ALL)
+    private List<OrdenPermisosEntity> ordenPermiso;
+
+    @OneToMany(mappedBy = "ordenServicioCargos", cascade = CascadeType.ALL)
+    private List<CargosEntity> cargos;
+
+    @OneToMany(mappedBy = "ordenServicioFinanciamiento", cascade = CascadeType.ALL)
+    private List<FinanciamientoEntity> financiamiento;
+
 }
