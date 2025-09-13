@@ -1,11 +1,11 @@
 package apiTrackline.proyectoPTC.Controllers.ViajeController;
 
 import apiTrackline.proyectoPTC.Exceptions.EstadosExceptions.ExceptionOrdenServicioNoEncontrado;
-import apiTrackline.proyectoPTC.Exceptions.TrackingExceptions.ExceptionViajeNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.TransporteExceptions.ExceptionTransporteNoEncontrado;
+import apiTrackline.proyectoPTC.Exceptions.ViajeExceptions.ExceptionViajeNoEncontrado;
 import apiTrackline.proyectoPTC.Exceptions.ViajeExceptions.ExceptionViajeNoRegistrado;
 import apiTrackline.proyectoPTC.Exceptions.ViajeExceptions.ExceptionViajeRelacionada;
-import apiTrackline.proyectoPTC.Models.DTO.DTOPermisos;
+
 import apiTrackline.proyectoPTC.Models.DTO.DTOViaje;
 import apiTrackline.proyectoPTC.Services.ViajeService;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +52,7 @@ public class Viaje {
         }
     }
 
+    //METODO GET CON PAGINACIÓN
     @GetMapping("/datosViaje")
     public ResponseEntity<?> getViajes(
             @RequestParam(defaultValue = "0") int page,
@@ -81,7 +82,7 @@ public class Viaje {
         return ResponseEntity.ok(viajes);
     }
 
-    // MÉTODO GET - Obtener todos
+    // MÉTODO GET (SIN PAGINACIÓN) - Obtener todos sin paginación
     // RUTA: localhost:8080/apiViaje/obtener
     @GetMapping("/obtener")
     public ResponseEntity<?> obtenerViajes() {

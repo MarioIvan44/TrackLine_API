@@ -81,17 +81,14 @@ public class DTOViaje {
     @NotNull(message = "El ID de estados es obligatorio", groups = {OnCreate.class, OnUpdate.class})
     @Positive(message = "El ID de estados debe ser positivo", groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
     private Long idEstado;
-
     private Boolean documentos;
     private Boolean clasificacion;
     private Boolean digitacion;
     private Boolean registro;
     private Boolean pago;
-
     @Positive(message = "El idSelectivo no puede ser negativo", groups = {DTOEstados.OnCreate.class, DTOEstados.OnPatch.class, DTOEstados.OnUpdate.class})
     private Long idSelectivo;
     private String colorSelectivo;
-
     private Boolean levantePago;
     private Boolean equipoTransporte;
     private Boolean carga;
@@ -103,17 +100,13 @@ public class DTOViaje {
     private LocalDateTime horaEstimadaLlegada;
     private LocalDateTime horaLLegada;
     private LocalDateTime horaSalida;
-
     private String lugarPartida;
-
     private String coordenadaPartida;
     private String lugarLLegada;
-
     private String coordenadaLlegada;
-
     private Long progreso;
-
     private String progresoTrans;
+
     public interface OnCreate {}
     public interface OnUpdate {}
     public interface OnPatch {}
