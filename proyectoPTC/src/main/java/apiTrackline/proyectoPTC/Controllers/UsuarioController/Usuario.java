@@ -8,6 +8,7 @@ import apiTrackline.proyectoPTC.Models.DTO.DTOUsuario;
 import apiTrackline.proyectoPTC.Services.UsuarioService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -187,8 +188,6 @@ public class Usuario {
         }
     }
 
-    // MÉTODO DELETE
-    // RUTA: localhost:8080/apiUsuario/deleteUsuario/{id}
     @DeleteMapping("/deleteUsuario/{id}")
     public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
         try {
@@ -199,8 +198,13 @@ public class Usuario {
             ));
         } catch (ExceptionUsuarioNoEncontrado e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                    "status:", "Error",
+                    "status", "Error",   // ✅ corregido
                     "message", e.getMessage()
+            ));
+        } catch (EmptyResultDataAccessException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "status", "Error",
+                    "message", "Usuario con el ID especificado no existe"
             ));
         } catch (Exception e) {
             log.error("Error inesperado al eliminar usuario", e);

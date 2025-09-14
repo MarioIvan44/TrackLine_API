@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-@Table(name = "TB_TIPOCLIENTE")
+@Table(name = "TB_TIPOCLIENTES")
 public class TipoClienteEntity {
     @Id
     //generator: Generador en código Java

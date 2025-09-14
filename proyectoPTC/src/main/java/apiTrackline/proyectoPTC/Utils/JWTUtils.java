@@ -1,5 +1,6 @@
 package apiTrackline.proyectoPTC.Utils;
 
+import apiTrackline.proyectoPTC.Controllers.UsuarioController.Usuario;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -26,10 +27,10 @@ public class JWTUtils {
     /**
      * Metodo para crea JWT
      * @param id
-     * @param correo
+     * @param usuario
      * @return
      */
-    public String create(String id, String correo, String rol){
+    public String create(String id, String usuario, String rol){
         //Decodifica el secreto Base64 y crea una clave HMAC-SHA segura
         SecretKey signingKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecreto));
 
@@ -41,7 +42,7 @@ public class JWTUtils {
         return Jwts.builder()
                 .setId(id)                                              // ID único (JWT ID)
                 .setIssuedAt(now)                                       // Fecha de emisión
-                .setSubject(correo)                                     // Sujeto (usuario)
+                .setSubject(usuario)                                     // Sujeto (usuario)
                 .claim("id", id)
                 .claim("rol", rol)
                 .setIssuer(issuer)                                      // Emisor del token
@@ -53,6 +54,8 @@ public class JWTUtils {
     public String extractRol(String token){
         Claims claims = parseToken(token);
         return claims.get("rol",String.class);
+
+
     }
 
     /**
