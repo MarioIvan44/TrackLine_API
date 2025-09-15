@@ -40,23 +40,21 @@ public class JwtCookieAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         try {
+            // 1️⃣ Permitir paso directo a endpoints públicos
             if (isPublicEndpoint(request)) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            // 1️⃣ Extraer token de cookie
+            // 2️⃣ Extraer token de cookie o header
             String token = extractTokenFromCookies(request);
-
-            // 2️⃣ Si no está en cookie, intentar header Authorization
             if (token == null || token.isBlank()) {
                 token = extractTokenFromHeader(request);
             }
 
-            // 3️⃣ Si no hay token, devolver 401
+            // 3️⃣ Si no hay token, continuar sin autenticar (Spring decidirá si es necesario)
             if (token == null || token.isBlank()) {
-                log.info("No se encontró token en cookie ni header");
-                sendError(response, "Token no encontrado", HttpServletResponse.SC_UNAUTHORIZED);
+                filterChain.doFilter(request, response);
                 return;
             }
 
@@ -89,6 +87,9 @@ public class JwtCookieAuthFilter extends OncePerRequestFilter {
 
             // 5️⃣ Continuar con la cadena de filtros
             filterChain.doFilter(request, response);
+
+            log.info("Rol extraído del token: {}", rol);
+
 
         } catch (JwtException e) {
             log.warn("JWT inválido o expirado: {}", e.getMessage());
@@ -138,6 +139,7 @@ public class JwtCookieAuthFilter extends OncePerRequestFilter {
 
         // Endpoints públicos
         return (path.equals("/api/auth/login") && "POST".equals(method)) ||
-                (path.equals("/apiUsuario/postUsuario") && "POST".equals(method));
+                (path.equals("/apiUsuario/postUsuario") && "POST".equals(method)) ||
+                (path.equals("/apiClientes/agregarCliente") && "POST".equals(method));
     }
 }

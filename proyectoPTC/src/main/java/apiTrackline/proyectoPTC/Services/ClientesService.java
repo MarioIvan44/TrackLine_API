@@ -64,7 +64,7 @@ public class ClientesService {
 
         if (entity.getTipoCliente() != null){
             dto.setIdTipoCliente(entity.getTipoCliente().getIdTipoCliente());
-            dto.setTipoCliente(entity.getTipoCliente().getTipo());
+            dto.setTipo(entity.getTipoCliente().getTipo());
         }
         return dto;
     }

@@ -16,17 +16,21 @@ public class DTOClientes {
     @Size(max = 20, message = "El campo 'clienteNit' debe tener como máximo 20 caracteres", groups = {OnCreate.class, OnPatch.class, OnUpdate.class})
     private String clienteNit;
 
-    @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$", message = "El campo 'nombre' solo debe contener letras y espacios", groups = {OnCreate.class, OnPatch.class, OnUpdate.class})
+
     @Size(max = 100, message = "El campo 'nombre' debe tener como máximo 100 caracteres", groups = {OnCreate.class, OnPatch.class, OnUpdate.class})
     @NotBlank(message = "El campo 'nombre' no puede estar vacío", groups = {OnCreate.class, OnUpdate.class})
     private String nombre;
 
-    @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$", message = "El campo 'apellido' solo debe contener letras y espacios", groups = {OnCreate.class, OnPatch.class, OnUpdate.class})
+
     @Size(max = 100, message = "El campo 'apellido' debe tener como máximo 100 caracteres", groups = {OnCreate.class, OnPatch.class, OnUpdate.class})
+    @NotBlank(message = "El nombre no puede estar vacio" , groups = {OnCreate.class, OnUpdate.class})
     private String apellido;
 
     @Size(max = 15, message = "El campo 'telefono' debe tener como máximo 15 caracteres", groups = {OnCreate.class, OnPatch.class, OnUpdate.class})
     private String telefono;
+
+
+
 
     @Email
     @Pattern(
@@ -53,7 +57,7 @@ public class DTOClientes {
     @Positive(message = "El id del tipo cliente no puede ser negativo", groups = {OnCreate.class, OnUpdate.class, OnPatch.class})
     @NotNull(message = "El id tipo cliente no puede ser nulo", groups = {OnCreate.class, OnUpdate.class})
     private Long idTipoCliente;
-    private String tipoCliente;
+    private String tipo;
 
 
     public interface OnCreate{}

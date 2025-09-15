@@ -35,8 +35,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST , "/apiUsuario/postUsuario").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/apiClientes/agregarCliente").permitAll()
                         .requestMatchers(HttpMethod.POST ,  "/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST ,  "/api/auth/me").permitAll()
+                        .requestMatchers("/api/auth/logout").authenticated()
                         .requestMatchers("/api/auth/me").authenticated()
 
                 //ENDPOINTS PARA ADUANA
@@ -59,7 +61,6 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/apiClientes/datosClientes").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/apiClientes/buscarCliente").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/apiClientes/clientes").authenticated()
-                                .requestMatchers(HttpMethod.POST, "/apiClientes/agregarCliente").hasAuthority("ROLE_Administrador")
                                 .requestMatchers(HttpMethod.PUT, "/apiClientes/actualizarCliente/{nit}").hasAuthority("ROLE_Administrador")
                                 .requestMatchers(HttpMethod.PATCH, "/apiClientes/actualizarParcialmente/{nit}").hasAuthority("ROLE_Administrador")
                                 .requestMatchers(HttpMethod.DELETE, "/apiClientes/eliminarCliente/{nit}").hasAuthority("ROLE_Administrador")
@@ -200,7 +201,6 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/apiUsuario/dataUsuario").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/apiUsuario/obtenerUsuarioPorId/{id}").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/apiUsuario/buscarUsuarioPorNombre/{usuario}").authenticated()
-                                .requestMatchers(HttpMethod.POST, "/apiUsuario/postUsuario").hasAnyAuthority("ROLE_Administrador", "ROLE_Cliente")
                                 .requestMatchers(HttpMethod.PUT, "/apiUsuario/updateUsuario/{id}").hasAuthority("ROLE_Administrador")
                                 .requestMatchers(HttpMethod.PATCH, "/apiUsuario/patchUsuario/{id}").hasAuthority("ROLE_Administrador")
                                 .requestMatchers(HttpMethod.DELETE, "/apiUsuario/deleteUsuario/{id}").hasAuthority("ROLE_Administrador")

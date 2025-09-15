@@ -9,8 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost", allowCredentials = "true")
@@ -51,11 +53,47 @@ public class AuthController {
 
             Cookie cookie = new Cookie("authToken", token);
             cookie.setHttpOnly(true);
-            cookie.setSecure(true);
+            cookie.setSecure(false);
             cookie.setPath("/");
             cookie.setMaxAge(86400);
             response.addCookie(cookie);
         }
     }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("No autenticado");
+        }
+
+        // Extraer datos del usuario
+        String username = authentication.getName();
+        var authorities = authentication.getAuthorities()
+                .stream()
+                .map(Object::toString)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "usuario", username,
+                "roles", authorities
+        ));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("authToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // elimina la cookie
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok("Sesión cerrada");
+    }
+
+
 
 }

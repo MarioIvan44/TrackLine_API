@@ -1,5 +1,6 @@
 package apiTrackline.proyectoPTC.Services;
 
+import apiTrackline.proyectoPTC.Config.Argon2.Argon2Password;
 import apiTrackline.proyectoPTC.Entities.RolesEntity;
 import apiTrackline.proyectoPTC.Entities.UsuarioEntity;
 import apiTrackline.proyectoPTC.Exceptions.UsuarioExceptions.ExceptionRolNoEncontrado;
@@ -27,6 +28,9 @@ public class UsuarioService {
     @Autowired
     private RolesRepository rolesRepo;
 
+    @Autowired
+    private Argon2Password argon2Password;
+
     // Paginación y obtención de todos los usuarios
     public Page<DTOUsuario> obtenerUsuarios(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -46,8 +50,7 @@ public class UsuarioService {
         DTOUsuario dto = new DTOUsuario();
         dto.setIdUsuario(user.getIdUsuario());
         dto.setUsuario(user.getUsuario());
-        dto.setContrasenia(user.getContrasenia());
-
+        dto.setContrasenia(user.getContrasenia()); // hash
         if (user.getRol() != null) {
             dto.setIdRol(user.getRol().getIdRol());
             dto.setRol(user.getRol().getRol());
@@ -74,7 +77,11 @@ public class UsuarioService {
         try {
             UsuarioEntity user = new UsuarioEntity();
             user.setUsuario(dtoUser.getUsuario());
-            user.setContrasenia(dtoUser.getContrasenia());
+
+
+            String hash = argon2Password.EncryptPassword(dtoUser.getContrasenia());
+            user.setContrasenia(hash);
+
             user.setRol(rol);
 
             UsuarioEntity creado = repo.save(user);
@@ -96,7 +103,11 @@ public class UsuarioService {
         }
 
         user.setUsuario(dtoUser.getUsuario());
-        user.setContrasenia(dtoUser.getContrasenia());
+
+        if (dtoUser.getContrasenia() != null && !dtoUser.getContrasenia().isBlank()) {
+            String hash = argon2Password.EncryptPassword(dtoUser.getContrasenia());
+            user.setContrasenia(hash);
+        }
 
         if (dtoUser.getIdRol() != null) {
             RolesEntity rol = rolesRepo.findById(dtoUser.getIdRol())
@@ -107,7 +118,7 @@ public class UsuarioService {
         return convertirAUsuarioDTO(repo.save(user));
     }
 
-    // Patch usuario
+    // Patch usuario (actualización parcial)
     public DTOUsuario patchUsuario(Long id, DTOUsuario dtoUser) {
         UsuarioEntity user = repo.findById(id)
                 .orElseThrow(() -> new ExceptionUsuarioNoEncontrado("Usuario no encontrado con id " + id));
@@ -119,8 +130,9 @@ public class UsuarioService {
             user.setUsuario(dtoUser.getUsuario());
         }
 
-        if (dtoUser.getContrasenia() != null) {
-            user.setContrasenia(dtoUser.getContrasenia());
+        if (dtoUser.getContrasenia() != null && !dtoUser.getContrasenia().isBlank()) {
+            String hash = argon2Password.EncryptPassword(dtoUser.getContrasenia());
+            user.setContrasenia(hash);
         }
 
         if (dtoUser.getIdRol() != null) {
@@ -150,4 +162,5 @@ public class UsuarioService {
                 .orElseThrow(() -> new ExceptionUsuarioNoEncontrado("Usuario no encontrado con nombre: " + nombreUsuario));
         return convertirAUsuarioDTO(user);
     }
+
 }
