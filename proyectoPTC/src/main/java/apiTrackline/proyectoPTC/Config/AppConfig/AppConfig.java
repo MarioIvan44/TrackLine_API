@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
 
     @Bean
-    public JwtCookieAuthFilter jwtCookieAuthFilter(JWTUtils jwtUtils){
+    public JwtCookieAuthFilter  jwtCookieAuthFilter(JWTUtils jwtUtils){
         return new JwtCookieAuthFilter(jwtUtils);
     }
-
 }
+

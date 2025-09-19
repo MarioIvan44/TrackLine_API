@@ -1,7 +1,9 @@
 package apiTrackline.proyectoPTC.Utils;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -11,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,7 +29,6 @@ public class JwtCookieAuthFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(JwtCookieAuthFilter.class);
     private static final String AUTH_COOKIE_NAME = "authToken";
-
     private final JWTUtils jwtUtils;
 
     @Autowired
@@ -35,81 +37,67 @@ public class JwtCookieAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
+
+        // CORREGIDO: Mejor lógica para endpoints públicos
+        if (isPublicEndpoint(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         try {
-            // 1️⃣ Permitir paso directo a endpoints públicos
-            if (isPublicEndpoint(request)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            // 2️⃣ Extraer token de cookie o header
             String token = extractTokenFromCookies(request);
-            if (token == null || token.isBlank()) {
-                token = extractTokenFromHeader(request);
-            }
 
-            // 3️⃣ Si no hay token, continuar sin autenticar (Spring decidirá si es necesario)
             if (token == null || token.isBlank()) {
+                // Para endpoints no públicos, requerimos token
+                if (!isPublicEndpoint(request)) {
+                    sendError(response, "Token no encontrado", HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
                 filterChain.doFilter(request, response);
-                return;
-            }
-
-            // 4️⃣ Validar token
-            if (!jwtUtils.validate(token)) {
-                log.info("Token inválido o expirado: {}", token);
-                sendError(response, "Token inválido o expirado", HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
             Claims claims = jwtUtils.parseToken(token);
+
+            // EXTRAER EL ROL REAL del token
             String rol = jwtUtils.extractRol(token);
 
-            if (rol == null || rol.isBlank()) {
-                sendError(response, "Rol no encontrado en el token", HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
-
-            Collection<SimpleGrantedAuthority> authorities =
+            // CREAR AUTHORITIES BASADO EN EL ROL REAL
+            Collection<? extends GrantedAuthority> authorities =
                     Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + rol));
 
+            // CREAR AUTENTICACIÓN CON AUTHORITIES CORRECTOS
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            claims.getSubject(),
-                            null,
-                            authorities
+                            claims.getSubject(), // username
+                            null, // credentials
+                            authorities // ← ROLES REALES
                     );
 
+            // ESTABLECER AUTENTICACIÓN EN CONTEXTO
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // 5️⃣ Continuar con la cadena de filtros
             filterChain.doFilter(request, response);
 
-            log.info("Rol extraído del token: {}", rol);
-
-
-        } catch (JwtException e) {
-            log.warn("JWT inválido o expirado: {}", e.getMessage());
-            sendError(response, "Token inválido o expirado", HttpServletResponse.SC_UNAUTHORIZED);
+        } catch (ExpiredJwtException e) {
+            log.warn("Token expirado: {}", e.getMessage());
+            sendError(response, "Token expirado", HttpServletResponse.SC_UNAUTHORIZED);
+        } catch (MalformedJwtException e) {
+            log.warn("Token malformado: {}", e.getMessage());
+            sendError(response, "Token inválido", HttpServletResponse.SC_FORBIDDEN);
         } catch (Exception e) {
-            log.error("Error inesperado en autenticación", e);
-            sendError(response, "Error de autenticación", HttpServletResponse.SC_UNAUTHORIZED);
+            log.error("Error de autenticación", e);
+            sendError(response, "Error de autenticación", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
-    // ---------- Métodos auxiliares ----------
-
     private String extractTokenFromCookies(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            log.info("No hay cookies en la petición");
-            return null;
-        }
-
-        Arrays.stream(cookies).forEach(c -> log.info("Cookie recibida: {} = {}", c.getName(), c.getValue()));
+        if (cookies == null) return null;
 
         return Arrays.stream(cookies)
                 .filter(c -> AUTH_COOKIE_NAME.equals(c.getName()))
@@ -118,28 +106,22 @@ public class JwtCookieAuthFilter extends OncePerRequestFilter {
                 .orElse(null);
     }
 
-    private String extractTokenFromHeader(HttpServletRequest request){
-        String header = request.getHeader("Authorization");
-        if(header != null && header.startsWith("Bearer ")) {
-            log.info("Token extraído del header Authorization");
-            return header.substring(7);
-        }
-        return null;
-    }
-
     private void sendError(HttpServletResponse response, String message, int status) throws IOException {
         response.setContentType("application/json");
         response.setStatus(status);
-        response.getWriter().write(String.format("{\"error\": \"%s\", \"status\": %d}", message, status));
+        response.getWriter().write(String.format(
+                "{\"error\": \"%s\", \"status\": %d}", message, status));
     }
 
+    // MEJORADA: Lógica para endpoints públicos
     private boolean isPublicEndpoint(HttpServletRequest request) {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
         // Endpoints públicos
         return (path.equals("/api/auth/login") && "POST".equals(method)) ||
+                (path.equals("/apiClientes/agregarCliente") && "POST".equals(method)) ||
                 (path.equals("/apiUsuario/postUsuario") && "POST".equals(method)) ||
-                (path.equals("/apiClientes/agregarCliente") && "POST".equals(method));
+                (path.equals("/api/public/") && "GET".equals(method));
     }
 }

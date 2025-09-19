@@ -90,6 +90,7 @@ apiTrackline\proyectoPTC\Models\DTO\DTOViaje$OnUpdate.class
 apiTrackline\proyectoPTC\Controllers\TipoDatoContableController\TipoDatoContable.class
 apiTrackline\proyectoPTC\Exceptions\ServicioTransporteExceptions\ExceptionServicioTransporteNoEncontrado.class
 apiTrackline\proyectoPTC\Repositories\SelectivoRepository.class
+apiTrackline\proyectoPTC\Controllers\PruebaEndpoints\TestRol.class
 apiTrackline\proyectoPTC\Exceptions\EstadosExceptions\ExceptionEstadoRelacionado.class
 apiTrackline\proyectoPTC\Entities\InfoEmbarqueEntity.class
 apiTrackline\proyectoPTC\Models\DTO\DTOTipoServicio.class
