@@ -25,6 +25,22 @@ public class Financiamiento {
     @Autowired
     private FinanciamientoService service;
 
+    // MÉTODO GET (sin paginación)
+    @GetMapping("/get")
+    public ResponseEntity<?> getFinanciamiento() {
+        try {
+            List<DTOFinanciamiento> financiamiento = service.getSinPaginacion();
+            return ResponseEntity.ok(financiamiento);
+        } catch (Exception e) {
+            log.error("Error al obtener los financiamientos", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "status", "Error",
+                    "message", "Error no controlado al obtener los financiamientos"
+            ));
+        }
+    }
+
+
     // MÉTODO GET (con paginación)
     @GetMapping("/obtenerDatos")
     public ResponseEntity<?> obtenerFinanciamientos(

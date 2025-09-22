@@ -30,6 +30,14 @@ public class FinanciamientoService {
     @Autowired
     private OrdenServicioRepository ordenServicioRepo;
 
+    //get sin paginación
+    public List<DTOFinanciamiento> getSinPaginacion() {
+        List<FinanciamientoEntity> financiamiento = repo.findAll();
+        return empleados.stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
+    }
+
     // LISTAR con paginación
     public Page<DTOFinanciamiento> obtenerFinanciamiento(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);

@@ -1,6 +1,5 @@
 package apiTrackline.proyectoPTC;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,16 +7,28 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ProyectoPtcApplication {
 
 	public static void main(String[] args) {
-		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        loadEnvironmentVariables();
+        SpringApplication.run(ProyectoPtcApplication.class, args);
+    }
 
-		dotenv.entries().forEach( entry ->
+    static void loadEnvironmentVariables() {
+        // Verificar si estamos en Heroku (PORT es una variable que siempre existe en Heroku)
+        boolean isHeroku = System.getenv("PORT") != null;
 
-				System.setProperty(entry.getKey(), entry.getValue())
+        if (isHeroku) {
+            System.out.println("Ejecutando en Heroku - usando variables de entorno del sistema");
+            String port = System.getenv("PORT");
+            if (port == null) {
+                port = "8080";
+            }
+            System.setProperty("server.port", port);
+        }
 
-		);
-
-		SpringApplication.run(ProyectoPtcApplication.class, args);
-	}
-
+        // Asegurar que el puerto de Heroku tenga prioridad
+        String herokuPort = System.getenv("PORT");
+        if (herokuPort != null) {
+            System.setProperty("server.port", herokuPort);
+        }
+    }
 
 }
